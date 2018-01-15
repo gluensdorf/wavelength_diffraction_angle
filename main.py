@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
 import math as math
@@ -8,7 +8,7 @@ class foobar:
     def __init__(self, g, m, hz, lambda_min, beta_Mb):
         """
         g is the raster constant
-        m is the order)
+        m is the order
         hz 'Abstand opt. Gitter - geom. Muster bzw. Pendel'
         lambda_min is wavelength minimum
         beta_Mb is the 'Messbereich'
@@ -30,7 +30,6 @@ class foobar:
         self.A
         self.B
         self.C
-        pass
 
     def calc_diffraction_angle(self):
         # we need to specify 'interval'

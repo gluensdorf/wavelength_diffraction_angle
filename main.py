@@ -165,4 +165,5 @@ class foobar:
                     ]
                 )
             )
+        return beta_xy
     

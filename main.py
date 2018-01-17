@@ -4,7 +4,7 @@
 import math as math
 import numpy as np
 
-class foobar:
+class WavelengthDiffractionAngle:
     def __init__(self, g, m, hz, lambda_min, beta_Mb):
         """
         g is the raster constant
@@ -18,7 +18,7 @@ class foobar:
         self.h_z = h_z
         self.lambda_min = lambda_min
         self.beta_Mb = beta_Mb
-        self.alpha_g = 2*beta_Mb # +/- 10°
+        self.alpha_g = 2 * beta_Mb # +/- 10°
         self.delta_lambda = (2 * g)/m * np.sin(alpha_g)
         self.lambda_max = delta_lambda + lambda_min
         self.alpha_e = np.arcsin(-(m/(2 * g))*(lambda_min + lambda_max))

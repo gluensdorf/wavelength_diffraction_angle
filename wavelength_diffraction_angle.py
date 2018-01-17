@@ -30,6 +30,7 @@ class WavelengthDiffractionAngle:
         self.A
         self.B
         self.C
+        self.func_equation
         self.determinant
         self.x_1
 
@@ -104,7 +105,7 @@ class WavelengthDiffractionAngle:
 
     # need a better name for that function
     def calc_function_equation(self):
-        func_equation = self.h_z * np.array(
+        self.func_equation = self.h_z * np.array(
             [
                 np.cos(self.theta) * np.tan(self.alpha_m[1]) - np.sin(self.theta) * np.sin(self.phi),
                 np.cos(self.theta) * np.tan(self.alpha_m[0]) - np.sin(self.theta) * np.sin(self.phi),
@@ -117,7 +118,6 @@ class WavelengthDiffractionAngle:
                 np.sin(self.beta_Mb * self.tau)
             ]
         )
-        return func_equation
     
     def noname(self):
         self.x_1 = np.array([self.theta, self.phi, self.tau]) - (

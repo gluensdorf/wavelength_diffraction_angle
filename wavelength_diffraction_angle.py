@@ -122,17 +122,17 @@ class WavelengthDiffractionAngle:
     
     def noname(self):
         # TODO: 3.2 forgot to transpose
+        # TODO: correct values if not dividing by self.determinant - BUT WHY?!
         # TODO: why are theta and phi tuples???
         foo = np.array([[self.theta[0]], [self.phi[0]], [self.tau]]) # is 3x1
-        print('foo: ', foo)
-        # print('')
-        print('A: ', self.A)
         foobar = np.transpose(np.hstack((self.A, self.B, self.C))) #/ self.determinant
+        ABC = np.hstack((self.A, self.B, self.C))
+        print('ABC: ', ABC)
+        foobar = ABC / self.determinant * self.determinant
+        foobar = np.transpose(foobar)
         print('foobar: ', foobar)
 
         bar = foobar.dot(self.func_equation) # is 3x3
-        # print('np.hstack: ', np.hstack((self.A, self.B, self.C)))
-        # print(bar)
         self.x_1 = foo - bar
         print('x_1: ', self.x_1)
 

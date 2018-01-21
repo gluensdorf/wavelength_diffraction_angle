@@ -28,16 +28,15 @@ class WavelengthDiffractionAngle:
     # takes lambda_vert and lambda_diag checks if they are within the range of lambda_min and lambda_max (correct?)
     # if so, calculates alpha_m_vert and alpha_m_diag
     # and returns alpha_m[alpha_m_vert, alpha_m_diag]
-    def calc_diffraction_angle(self, lambda_vert, lambda_diag):
-        self.alpha_m = [
-            np.arcsin(((self.m * lambda_vert) / self.g) + np.sin(self.alpha_e)),
-            np.arcsin(((self.m * lambda_diag) / self.g) + np.sin(self.alpha_e))
-        ]
+    def calc_diffraction_angle(self, lambda_diag, lambda_vert):
+        self.alpha_m = np.array([
+            np.arcsin((self.m * lambda_vert) / self.g + np.sin(self.alpha_e)),
+            np.arcsin((self.m * lambda_diag) / self.g + np.sin(self.alpha_e))
+        ])
 
     def calc_x_0(self):
         alpha_m_vert = self.alpha_m[0]
         alpha_m_diag = self.alpha_m[1]
-        print('self.beta_mb: ', self.beta_Mb)
 
         if alpha_m_vert > self.beta_Mb:
             a = 1
@@ -69,6 +68,8 @@ class WavelengthDiffractionAngle:
             """
             print('self.tau: ', self.tau)
             """
+        # print('self.theta: ', self.theta)
+        # print('type(self.theta): ', type(self.theta))
 
     def calc_jokabi_matrix(self):
         self.A = self.beta_Mb * np.sin(self.theta) * np.cos(self.beta_Mb * self.tau) * np.array(
@@ -78,7 +79,7 @@ class WavelengthDiffractionAngle:
                 np.cos(self.phi)*(1 - np.tan(self.beta_Mb * self.tau) * np.tan(self.beta_Mb))
             ]
         )
-        print('self.A: ', self.A)
+        # print('self.A: ', self.A)
         self.B = self.beta_Mb * np.cos(self.theta) * np.cos(self.beta_Mb * self.tau) * np.array(
             [
                 np.cos(self.phi) * np.tan(self.beta_Mb * self.tau) * np.tan(self.beta_Mb) - np.sin(self.phi) - np.tan(self.theta) * np.tan(self.alpha_m[0]),
@@ -87,7 +88,7 @@ class WavelengthDiffractionAngle:
                     np.tan(self.theta) * np.tan(self.alpha_m[0]) - np.sin(self.phi)
             ]
         )
-        print('self.B: ', self.B)
+        # print('self.B: ', self.B)
         self.C = math.pow(np.sin(self.theta), 2) * np.array(
             [
                 np.cos(self.theta) + np.sin(self.phi) * np.tan(self.alpha_m[0]),
@@ -95,13 +96,14 @@ class WavelengthDiffractionAngle:
                 np.cos(self.phi) * (np.tan(self.alpha_m[1]) - np.tan(self.alpha_m[0]))
             ]
         )
-        print('self.C: ', self.C)
+        # print('self.C: ', self.C)
 
     def determinant_jakobi(self):
+        # print('self.alpha_m[0]: ', self.alpha_m[0])
         # found no 'cot' function in numpy, used '1/tan' instead
-        self.determinant = self.beta_Mb * np.cos(self.beta_Mb * self.tau) * math.pow(np.sin(self.theta), 2) * (
-            np.cos(self.theta) * (np.tan(self.alpha_m[0]) - np.tan(self.alpha_m[1])) + np.sin(self.theta) * np.tan(self.alpha_m[0]) - 
-            np.tan(self.beta_Mb * self.tau) * np.tan(self.beta_Mb) * (1/(np.tan(self.theta)) + np.sin(self.theta) * np.tan(self.alpha_m[1])) + 1/(np.tan(self.theta))
+        self.determinant = self.beta_Mb * np.cos(self.beta_Mb * self.tau) * math.pow(np.sin(self.theta), 2) * ( #looks correct
+            np.cos(self.phi) * (np.tan(self.alpha_m[0]) - np.tan(self.alpha_m[1])) + np.sin(self.phi) * np.tan(self.alpha_m[0]) - 
+            np.tan(self.beta_Mb * self.tau) * np.tan(self.beta_Mb) * (1/(np.tan(self.theta)) + np.sin(self.phi) * np.tan(self.alpha_m[1])) + 1/(np.tan(self.theta))
         )
 
     # need a better name for that function
@@ -122,19 +124,19 @@ class WavelengthDiffractionAngle:
     
     def noname(self):
         # TODO: 3.2 forgot to transpose
-        # TODO: correct values if not dividing by self.determinant - BUT WHY?!
+        # TODO: correct values if NOT dividing by self.determinant - BUT WHY?!
         # TODO: why are theta and phi tuples???
         foo = np.array([[self.theta[0]], [self.phi[0]], [self.tau]]) # is 3x1
-        foobar = np.transpose(np.hstack((self.A, self.B, self.C))) #/ self.determinant
         ABC = np.hstack((self.A, self.B, self.C))
-        print('ABC: ', ABC)
-        foobar = ABC / self.determinant * self.determinant
-        foobar = np.transpose(foobar)
-        print('foobar: ', foobar)
+        foobar = np.transpose(ABC) / self.determinant
+        # print('ABC: ', np.transpose(ABC))
+        # foobar = ABC #/ self.determinant
+        # foobar = np.transpose(foobar)
+        # print('foobar: ', foobar)
 
         bar = foobar.dot(self.func_equation) # is 3x3
         self.x_1 = foo - bar
-        print('x_1: ', self.x_1)
+        # print('x_1: ', self.x_1) # is 3x1
 
     def calc_tilting_angle(self):
         # TODO: why is x_1 still 3x3?
@@ -144,12 +146,13 @@ class WavelengthDiffractionAngle:
         new_phi = self.x_1[1][0]
         new_tau = self.x_1[2][0]
 
-        print('new_theta: ', new_theta)
-        print('new_phi: ', new_phi)
+        print('new_theta: ', np.degrees(new_theta))
+        print('new_phi: ', np.degrees(new_phi))
         print('new_tau: ', new_tau)
         print('---------------')
         if new_theta == 0:
             beta_xy = [0, 0]
+            print('new_theta == 0')
             return beta_xy
         elif new_phi >= 0 and new_phi < np.pi/2:
             beta_xy = np.sign(new_theta) * (
@@ -168,6 +171,7 @@ class WavelengthDiffractionAngle:
                     ]
                 )
             )
+            print('first elif')
             return beta_xy
         elif new_phi >= np.pi/2 and new_phi < np.pi:
             beta_xy = np.dot(np.sign(new_theta), ( # missing '-' infront of np.sign()?
@@ -186,5 +190,6 @@ class WavelengthDiffractionAngle:
                     ]
                 )
             ))
+            print('second elif')
             return beta_xy
     

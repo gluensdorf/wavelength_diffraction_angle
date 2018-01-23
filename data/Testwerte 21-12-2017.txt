@@ -1,13 +1,13 @@
-Testwerte zur Berechnung von Neigungswinkeln aus Wellenlängenpaaren
+Testwerte zur Berechnung von Neigungswinkeln aus Wellenlï¿½ngenpaaren
 *******************************************************************
 
 Ordnung m               : 1
-Gitterkonstante [µm]    : 0.769231
-Minimum Wellenlänge [nm]: 430.0000
+Gitterkonstante [ï¿½m]    : 0.769231
+Minimum Wellenlï¿½nge [nm]: 430.0000
 Messbereich [grad]      : 5
 Einfallswinkel [grad]   : -47.1089
 
- Sensorneigung  |   Transformationsparameter  |Wellenlänge am |Wellenlänge am
+ Sensorneigung  |   Transformationsparameter  |Wellenlï¿½nge am |Wellenlï¿½nge am
   bx   |   by   |  Theta  |    Phi        t   |diagonalen Stab|vertikalen Stab
 [grad] | [grad] |  [grad] |   [grad]     []   |     [nm]      |    [nm]
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------

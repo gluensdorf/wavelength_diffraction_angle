@@ -146,13 +146,12 @@ class WavelengthDiffractionAngle:
         new_phi = self.x_1[1][0]
         new_tau = self.x_1[2][0]
 
+        print('---------------')
         print('new_theta: ', np.degrees(new_theta))
         print('new_phi: ', np.degrees(new_phi))
         print('new_tau: ', new_tau)
-        print('---------------')
         if new_theta == 0:
             beta_xy = [0, 0]
-            print('new_theta == 0')
             return beta_xy
         elif new_phi >= 0 and new_phi < np.pi/2:
             beta_xy = np.sign(new_theta) * (
@@ -171,10 +170,9 @@ class WavelengthDiffractionAngle:
                     ]
                 )
             )
-            print('first elif')
             return beta_xy
         elif new_phi >= np.pi/2 and new_phi < np.pi:
-            beta_xy = np.dot(np.sign(new_theta), ( # missing '-' infront of np.sign()?
+            beta_xy = np.dot(-1.0 * np.sign(new_theta), ( # missing '-' infront of np.sign()?
                 np.array(
                     [
                         np.arccos(
@@ -190,6 +188,5 @@ class WavelengthDiffractionAngle:
                     ]
                 )
             ))
-            print('second elif')
             return beta_xy
     

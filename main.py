@@ -16,7 +16,8 @@ from wavelength_diffraction_angle import WavelengthDiffractionAngle as wlda
 # lambda_min is in nano-meters
 
 f = open('data/Testwerte 21-12-2017.txt', 'r')
-data = list(f)[13:-1]
+data = list(f)[13:len(list(f))-1]
+f.close()
 value = []
 for x in data:
     x.split('|', 6)[-2:]
@@ -39,6 +40,7 @@ for pair in value:
     foo.noname()
 
     bar = foo.calc_tilting_angle()
+    print(f'lambda_vert: {vert}\nlambda_diag: {diag}')
     print(bar)
     a = np.degrees(bar[0])
     b = np.degrees(bar[1])

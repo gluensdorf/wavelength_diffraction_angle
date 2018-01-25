@@ -24,6 +24,11 @@ class WavelengthDiffractionAngle:
         self.alpha_e = np.arcsin(
             -1 * (self.m * (self.lambda_min + self.lambda_max)/(2 * self.g))
         )
+        self.new_theta = 0.0
+        self.new_phi = 0.0
+        self.new_tau = 0.0
+        self.beta_xy = []
+        
 
     # takes lambda_vert and lambda_diag checks if they are within the range of lambda_min and lambda_max (correct?)
     # if so, calculates alpha_m_vert and alpha_m_diag
@@ -142,51 +147,51 @@ class WavelengthDiffractionAngle:
         # TODO: why is x_1 still 3x3?
         # print(self.x_1) 
 
-        new_theta = self.x_1[0][0]
-        new_phi = self.x_1[1][0]
-        new_tau = self.x_1[2][0]
+        self.new_theta = self.x_1[0][0]
+        self.new_phi = self.x_1[1][0]
+        self.new_tau = self.x_1[2][0]
 
-        print('---------------')
-        print('new_theta: ', np.degrees(new_theta))
-        print('new_phi: ', np.degrees(new_phi))
-        print('new_tau: ', new_tau)
-        if new_theta == 0:
-            beta_xy = [0, 0]
-            return beta_xy
-        elif new_phi >= 0 and new_phi < np.pi/2:
-            beta_xy = np.sign(new_theta) * (
+        # print('---------------')
+        # print('self.new_theta: ', np.degrees(self.new_theta))
+        # print('self.new_phi: ', np.degrees(self.new_phi))
+        # print('self.new_tau: ', self.new_tau)
+        if self.new_theta == 0:
+            self.beta_xy = [0, 0]
+            return self.beta_xy
+        elif self.new_phi >= 0 and self.new_phi < np.pi/2:
+            self.beta_xy = np.sign(self.new_theta) * (
                 np.array(
                     [
                         -np.arccos(
                             1/np.sqrt(
-                                1 + math.pow(np.tan(new_theta), 2) * math.pow(np.sin(new_phi), 2)
+                                1 + math.pow(np.tan(self.new_theta), 2) * math.pow(np.sin(self.new_phi), 2)
                             )
                         ),
                         np.arccos(
                             1/np.sqrt(
-                                1 + math.pow(np.tan(new_theta), 2) * math.pow(np.cos(new_phi), 2)
+                                1 + math.pow(np.tan(self.new_theta), 2) * math.pow(np.cos(self.new_phi), 2)
                             )
                         )
                     ]
                 )
             )
-            return beta_xy
-        elif new_phi >= np.pi/2 and new_phi < np.pi:
-            beta_xy = np.dot(-1.0 * np.sign(new_theta), ( # missing '-' infront of np.sign()?
+            return self.beta_xy
+        elif self.new_phi >= np.pi/2 and self.new_phi < np.pi:
+            self.beta_xy = np.dot(-1.0 * np.sign(self.new_theta), ( # missing '-' infront of np.sign()?
                 np.array(
                     [
                         np.arccos(
                             1/np.sqrt(
-                                1 + math.pow(np.tan(new_theta), 2) * math.pow(np.sin(new_phi), 2)
+                                1 + math.pow(np.tan(self.new_theta), 2) * math.pow(np.sin(self.new_phi), 2)
                             )
                         ),
                         np.arccos(
                             1/np.sqrt(
-                                1 + math.pow(np.tan(new_theta), 2) * math.pow(np.cos(new_phi), 2)
+                                1 + math.pow(np.tan(self.new_theta), 2) * math.pow(np.cos(self.new_phi), 2)
                             )
                         )
                     ]
                 )
             ))
-            return beta_xy
+            return self.beta_xy
     

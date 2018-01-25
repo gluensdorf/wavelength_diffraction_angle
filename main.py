@@ -15,10 +15,22 @@ from wavelength_diffraction_angle import WavelengthDiffractionAngle as wlda
 # g is in micro-meter
 # lambda_min is in nano-meters
 
+def create_output(_wlda, vert, diag):
+    result = '---------------------\n'\
+        f'lambda_vert: {vert}\n'\
+        f'lambda_diag: {diag}\n'\
+        f'theta: \t{_wlda.new_theta}\n'\
+        f'phi: \t{_wlda.new_phi}\n'\
+        f'tau: \t{_wlda.new_tau}\n'\
+        f'beta_x: {np.degrees(_wlda.beta_xy[0])}\n'\
+        f'beta_y: {np.degrees(_wlda.beta_xy[1])}\n'
+    return result
+
 f = open('data/Testwerte 21-12-2017.txt', 'r')
 data = list(f)[13:len(list(f))-1]
 f.close()
 value = []
+result = []
 for x in data:
     x.split('|', 6)[-2:]
     value.append([float(bla) for bla in x.split('|', 6)])
@@ -40,9 +52,15 @@ for pair in value:
     foo.noname()
 
     bar = foo.calc_tilting_angle()
-    print(f'lambda_vert: {vert}\nlambda_diag: {diag}')
-    print(bar)
+    # print(f'lambda_vert: {vert}\nlambda_diag: {diag}')
+    # print(bar)
     a = np.degrees(bar[0])
     b = np.degrees(bar[1])
-    print(a)
-    print(b)
+    # print(a)
+    # print(b)
+    result.append(create_output(foo, vert, diag))
+
+with open("output.txt", "a") as myfile:
+    for line in result:
+        myfile.write(line)
+myfile.close()

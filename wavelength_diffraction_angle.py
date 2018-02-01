@@ -63,10 +63,15 @@ class WavelengthDiffractionAngle:
         else:
             a = -1
 
+        # TODO: with the test values the if-case is never executed
         if alpha_m_vert == self.beta_Mb: 
             self.theta = -alpha_m_diag
             self.phi = 0
             self.tau = -alpha_m_diag / self.beta_Mb 
+            print('if-case')
+            print('type(self.theta): ', type(self.theta))
+            print('type(self.phi): ', type(self.phi))
+            input()
         else:
             self.theta = a * np.arctan(
                 np.sqrt(
@@ -75,7 +80,7 @@ class WavelengthDiffractionAngle:
                             self.beta_Mb - alpha_m_vert), 2) + math.pow(np.tan(
                                 alpha_m_vert - alpha_m_diag - self.beta_Mb), 2) 
                             )
-                        ),
+                        )
             self.phi = np.arccos((a * np.tan(
                     alpha_m_vert - alpha_m_diag - self.beta_Mb)) / 
                     (np.sqrt(math.pow(np.tan(self.beta_Mb - alpha_m_vert), 2) + 
@@ -83,13 +88,13 @@ class WavelengthDiffractionAngle:
                             alpha_m_vert - alpha_m_diag - self.beta_Mb), 2)
                         )
                     )
-                ),
+                )
             self.tau = ((alpha_m_vert - alpha_m_diag) / self.beta_Mb) - 1
+            print('else-case')
+            print('type(self.theta): ', type(self.theta))
+            print('type(self.phi): ', type(self.phi))
             """
             print('self.tau: ', self.tau)
-        print('self.theta: ', self.theta)
-        print('type(self.theta): ', type(self.theta))
-        print('type(self.phi): ', type(self.phi))
             """
 
     def calc_jokabi_matrix(self):
@@ -146,8 +151,9 @@ class WavelengthDiffractionAngle:
     def noname(self):
         # TODO: 3.2 forgot to transpose
         # TODO: correct values if NOT dividing by self.determinant - BUT WHY?!
-        # TODO: why are theta and phi tuples???
-        foo = np.array([[self.theta[0]], [self.phi[0]], [self.tau]]) # is 3x1
+        # TODO: why are theta and phi tuples??? 
+        #   Because I put an ',' at the end of their line
+        foo = np.array([[self.theta], [self.phi], [self.tau]]) # is 3x1
         ABC = np.hstack((self.A, self.B, self.C))
         foobar = np.transpose(ABC) / self.determinant
         # print('ABC: ', np.transpose(ABC))
@@ -173,7 +179,7 @@ class WavelengthDiffractionAngle:
         # print('self.new_tau: ', self.new_tau)
         if self.new_theta == 0:
             self.beta_xy = [0, 0]
-            return self.beta_xy
+            # return self.beta_xy
         elif self.new_phi >= 0 and self.new_phi < np.pi/2:
             self.beta_xy = np.sign(self.new_theta) * (
                 np.array(
@@ -191,7 +197,7 @@ class WavelengthDiffractionAngle:
                     ]
                 )
             )
-            return self.beta_xy
+            # return self.beta_xy
         elif self.new_phi >= np.pi/2 and self.new_phi < np.pi:
             self.beta_xy = np.dot(-1.0 * np.sign(self.new_theta), ( # missing '-' infront of np.sign()?
                 np.array(
@@ -209,5 +215,5 @@ class WavelengthDiffractionAngle:
                     ]
                 )
             ))
-            return self.beta_xy
+            # return self.beta_xy
     

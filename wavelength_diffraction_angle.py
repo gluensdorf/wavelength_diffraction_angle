@@ -30,6 +30,21 @@ class WavelengthDiffractionAngle:
         self.beta_xy = []
         
 
+    def get_transformation_parameters(self):
+        """
+        returns new_theta, new_phi and new_tau in a list
+        """
+        return [self.new_theta, self.new_phi, self.new_tau]
+
+    def set_transformation_parameters(self, theta, phi, tau):
+        """
+        sets value self.theta, self.phi and self.tau to corresponding 
+        given parameter value
+        """
+        self.theta = theta
+        self.phi = phi
+        self.tau = tau
+
     # takes lambda_vert and lambda_diag checks if they are within the range of lambda_min and lambda_max (correct?)
     # if so, calculates alpha_m_vert and alpha_m_diag
     # and returns alpha_m[alpha_m_vert, alpha_m_diag]
@@ -72,9 +87,10 @@ class WavelengthDiffractionAngle:
             self.tau = ((alpha_m_vert - alpha_m_diag) / self.beta_Mb) - 1
             """
             print('self.tau: ', self.tau)
+        print('self.theta: ', self.theta)
+        print('type(self.theta): ', type(self.theta))
+        print('type(self.phi): ', type(self.phi))
             """
-        # print('self.theta: ', self.theta)
-        # print('type(self.theta): ', type(self.theta))
 
     def calc_jokabi_matrix(self):
         self.A = self.beta_Mb * np.sin(self.theta) * np.cos(self.beta_Mb * self.tau) * np.array(

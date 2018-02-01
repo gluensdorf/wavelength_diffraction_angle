@@ -42,8 +42,8 @@ for pair in value:
 
     _wlda.calc_diffraction_angle(lambda_vert=vert, lambda_diag=diag)
     _wlda.set_transformation_parameters(
-        theta=[trans_params[0]],
-        phi=[trans_params[1]],
+        theta=trans_params[0],
+        phi=trans_params[1],
         tau=trans_params[2]
         )
     _wlda.calc_jokabi_matrix()
@@ -60,4 +60,4 @@ for pair in value:
         )
     )
 
-hp.write_into_file("foo.txt", result)
+hp.write_into_file("diff_output.txt", result)

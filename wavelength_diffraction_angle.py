@@ -140,7 +140,7 @@ class WavelengthDiffractionAngle:
     
     def noname(self):
         foo = np.array([[self.theta], [self.phi], [self.tau]]) # is 3x1
-        ABC = np.hstack((self.A, self.B, self.C))
+        ABC = np.vstack((self.A, self.B, self.C))
         foobar = np.transpose(ABC) / self.determinant
         bar = foobar.dot(self.func_equation) # is 3x3
         self.x_1 = foo - bar
@@ -152,6 +152,7 @@ class WavelengthDiffractionAngle:
         if self.new_theta == 0:
             self.beta_xy = [0, 0]
         elif self.new_phi >= 0 and self.new_phi < np.pi/2:
+            print('bla 1')
             self.beta_xy = np.sign(self.new_theta) * (
                 np.array(
                     [
@@ -169,6 +170,7 @@ class WavelengthDiffractionAngle:
                 )
             )
         elif self.new_phi >= np.pi/2 and self.new_phi < np.pi:
+            print('boofar 2')
             self.beta_xy = np.dot(-1.0 * np.sign(self.new_theta), (
                 np.array(
                     [
@@ -185,4 +187,12 @@ class WavelengthDiffractionAngle:
                     ]
                 )
             ))
+        
+        print(self.new_theta)
+        print(self.new_phi)
+        print(self.new_tau)
+        print(self.new_phi - np.pi)
+        print(self.new_theta == 0)
+        print(self.new_phi >= 0 and self.new_phi < np.pi/2)
+        print(self.new_phi >= np.pi/2 and self.new_phi < np.pi)
     

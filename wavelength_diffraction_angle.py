@@ -90,12 +90,6 @@ class WavelengthDiffractionAngle:
                     )
                 )
             self.tau = ((alpha_m_vert - alpha_m_diag) / self.beta_Mb) - 1
-            print('else-case')
-            print('type(self.theta): ', type(self.theta))
-            print('type(self.phi): ', type(self.phi))
-            """
-            print('self.tau: ', self.tau)
-            """
 
     def calc_jokabi_matrix(self):
         self.A = self.beta_Mb * np.sin(self.theta) * np.cos(self.beta_Mb * self.tau) * np.array(
@@ -105,7 +99,6 @@ class WavelengthDiffractionAngle:
                 np.cos(self.phi)*(1 - np.tan(self.beta_Mb * self.tau) * np.tan(self.beta_Mb))
             ]
         )
-        # print('self.A: ', self.A)
         self.B = self.beta_Mb * np.cos(self.theta) * np.cos(self.beta_Mb * self.tau) * np.array(
             [
                 np.cos(self.phi) * np.tan(self.beta_Mb * self.tau) * np.tan(self.beta_Mb) - np.sin(self.phi) - np.tan(self.theta) * np.tan(self.alpha_m[0]),
@@ -114,7 +107,6 @@ class WavelengthDiffractionAngle:
                     np.tan(self.theta) * np.tan(self.alpha_m[0]) - np.sin(self.phi)
             ]
         )
-        # print('self.B: ', self.B)
         self.C = math.pow(np.sin(self.theta), 2) * np.array(
             [
                 np.cos(self.theta) + np.sin(self.phi) * np.tan(self.alpha_m[0]),
@@ -122,10 +114,8 @@ class WavelengthDiffractionAngle:
                 np.cos(self.phi) * (np.tan(self.alpha_m[1]) - np.tan(self.alpha_m[0]))
             ]
         )
-        # print('self.C: ', self.C)
 
     def determinant_jakobi(self):
-        # print('self.alpha_m[0]: ', self.alpha_m[0])
         # found no 'cot' function in numpy, used '1/tan' instead
         self.determinant = self.beta_Mb * np.cos(self.beta_Mb * self.tau) * math.pow(np.sin(self.theta), 2) * ( #looks correct
             np.cos(self.phi) * (np.tan(self.alpha_m[0]) - np.tan(self.alpha_m[1])) + np.sin(self.phi) * np.tan(self.alpha_m[0]) - 
@@ -149,37 +139,18 @@ class WavelengthDiffractionAngle:
         )
     
     def noname(self):
-        # TODO: 3.2 forgot to transpose
-        # TODO: correct values if NOT dividing by self.determinant - BUT WHY?!
-        # TODO: why are theta and phi tuples??? 
-        #   Because I put an ',' at the end of their line
         foo = np.array([[self.theta], [self.phi], [self.tau]]) # is 3x1
         ABC = np.hstack((self.A, self.B, self.C))
         foobar = np.transpose(ABC) / self.determinant
-        # print('ABC: ', np.transpose(ABC))
-        # foobar = ABC #/ self.determinant
-        # foobar = np.transpose(foobar)
-        # print('foobar: ', foobar)
-
         bar = foobar.dot(self.func_equation) # is 3x3
         self.x_1 = foo - bar
-        # print('x_1: ', self.x_1) # is 3x1
 
     def calc_tilting_angle(self):
-        # TODO: why is x_1 still 3x3?
-        # print(self.x_1) 
-
         self.new_theta = self.x_1[0][0]
         self.new_phi = self.x_1[1][0]
         self.new_tau = self.x_1[2][0]
-
-        # print('---------------')
-        # print('self.new_theta: ', np.degrees(self.new_theta))
-        # print('self.new_phi: ', np.degrees(self.new_phi))
-        # print('self.new_tau: ', self.new_tau)
         if self.new_theta == 0:
             self.beta_xy = [0, 0]
-            # return self.beta_xy
         elif self.new_phi >= 0 and self.new_phi < np.pi/2:
             self.beta_xy = np.sign(self.new_theta) * (
                 np.array(
@@ -197,9 +168,8 @@ class WavelengthDiffractionAngle:
                     ]
                 )
             )
-            # return self.beta_xy
         elif self.new_phi >= np.pi/2 and self.new_phi < np.pi:
-            self.beta_xy = np.dot(-1.0 * np.sign(self.new_theta), ( # missing '-' infront of np.sign()?
+            self.beta_xy = np.dot(-1.0 * np.sign(self.new_theta), (
                 np.array(
                     [
                         np.arccos(
@@ -215,5 +185,4 @@ class WavelengthDiffractionAngle:
                     ]
                 )
             ))
-            # return self.beta_xy
     

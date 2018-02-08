@@ -56,6 +56,8 @@ def single_calculation(diag, vert):
 def format_result(_wlda, theta, phi, tau, bx, by, num_iteration,vert, diag, diff=False): #vert, diag, 
     width = 20
     precision = 10
+    if len(_wlda.beta_xy) == 0:
+        _wlda.beta_xy = [0,0]
     if diff:
         result = f'{bx:^+{5}.{3}f}|'\
             f'{by:^+{5}.{3}f}|'\

@@ -46,13 +46,27 @@ for pair in value:
     input()
     """
 
+    print(f'diag: {diag}')
+    print(f'vert: {vert}')
+    print(f'pair: {pair}')
+    print(f'theta: {np.degrees(_wlda.theta)}')
+    print(f'phi: {np.degrees(_wlda.phi)}')
+    print(f'tau: {_wlda.tau}')
+    print(f'new_theta: {np.degrees(_wlda.new_theta)}')
+    print(f'new_phi: {np.degrees(_wlda.new_phi)}')
+    print(f'new_tau: {_wlda.new_tau}')
+    print(f'bx: {pair[0]}')
+    print(f'by: {pair[1]}')
+    print(f'_wlda.beta_xy: {np.degrees(_wlda.beta_xy[0])}')
+    print(f'_wlda.beta_xy: {np.degrees(_wlda.beta_xy[1])}')
     result.append(
         hp.format_result(
-            _wlda, #vert, diag, 
-            pair[2], pair[3], pair[4], pair[0], pair[1], 
-            num_iteration, vert, diag, diff=False
+            _wlda=_wlda, #vert, diag, 
+            theta=pair[2], phi=pair[3], tau=pair[4], bx=pair[0], by=pair[1], 
+            num_iteration=num_iteration, vert=vert, diag=diag, diff=False
         )
     )
+    '''
     # BEGIN NEXT ITERATION 
     num_iteration = 1
     trans_params = _wlda.get_transformation_parameters()
@@ -71,10 +85,11 @@ for pair in value:
 
     result.append(
         hp.format_result(
-            _wlda, # 
-            pair[2], pair[3], pair[4], pair[0], pair[1], 
-            num_iteration, vert, diag,diff=False
+            _wlda=_wlda, #vert, diag, 
+            theta=pair[2], phi=pair[3], tau=pair[4], bx=pair[0], by=pair[1], 
+            num_iteration=num_iteration, vert=vert, diag=diag, diff=False
         )
     )
+    '''
 
 hp.write_into_file("diff_output.txt", result)

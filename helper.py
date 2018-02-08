@@ -56,11 +56,9 @@ def single_calculation(diag, vert):
 def format_result(_wlda, theta, phi, tau, bx, by, num_iteration,vert, diag, diff=False): #vert, diag, 
     width = 20
     precision = 10
-    print(vert)
-    print(diag)
     if diff:
-        result = f'{bx:^+{width}.{precision}f}|'\
-            f'{by:^+{width}.{precision}f}|'\
+        result = f'{bx:^+{5}.{3}f}|'\
+            f'{by:^+{5}.{3}f}|'\
             f'{abs(theta - np.degrees(_wlda.new_theta)):^+{width}.{precision}f}|'\
             f'{abs(phi - np.degrees(_wlda.new_phi)):^+{width}.{precision}f}|'\
             f'{abs(tau - _wlda.new_tau):^+{width}.{precision}f}|'\
@@ -70,11 +68,11 @@ def format_result(_wlda, theta, phi, tau, bx, by, num_iteration,vert, diag, diff
             # f'{diag*1000:15.5f}|'\
             # f'{vert*1000:15.5f}|'\
     else:
-        result = f'{bx:^+{width}.{precision}f}|'\
-            f'{by:^+{width}.{precision}f}|'\
-            f'{np.degrees(_wlda.new_theta):^+{width}.{precision}f}|'\
-            f'{np.degrees(_wlda.new_phi):^+{width}.{precision}f}|'\
-            f'{_wlda.new_tau:^+{width}.{precision}f}|'\
+        result = f'{bx:^+{5}.{3}f}|'\
+            f'{by:^+{5}.{3}f}|'\
+            f'{np.degrees(_wlda.theta):^+{width}.{precision}f}|'\
+            f'{np.degrees(_wlda.phi):^+{width}.{precision}f}|'\
+            f'{_wlda.tau:^+{width}.{precision}f}|'\
             f'{np.degrees(_wlda.beta_xy[0]):^+{width}.{precision}f}|'\
             f'{np.degrees(_wlda.beta_xy[1]):^+{width}.{precision}f}|'\
             f'{num_iteration:^10}\n'

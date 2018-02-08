@@ -7,8 +7,8 @@ import helper as hp
 
 from wavelength_diffraction_angle import WavelengthDiffractionAngle as wlda
 
-# data = hp.load_file('data/Testwerte 01-02-2018.txt')
-data = hp.load_file('data/new_test')
+data = hp.load_file('data/Testwerte 21-12-2017.txt')
+# data = hp.load_file('data/new_test')
 value = hp.get_values_from_data(data)
 result = [hp.get_header()]
 num_iteration = int()
@@ -33,13 +33,24 @@ for pair in value:
     _wlda.noname()
     _wlda.calc_tilting_angle()
 
-    print('alpha_e: ', np.degrees(_wlda.alpha_e))
-    print(_wlda.beta_xy)
+    """
+    print('-----------')
+    print(np.degrees(_wlda.beta_xy))
+    print(np.degrees(_wlda.theta))
+    print(np.degrees(_wlda.new_theta))
+    print(np.degrees(_wlda.phi))
+    print(np.degrees(_wlda.new_phi))
+    print(_wlda.tau)
+    print(_wlda.new_tau)
+    print('-----------')
+    input()
+    """
+
     result.append(
         hp.format_result(
             _wlda, #vert, diag, 
             pair[2], pair[3], pair[4], pair[0], pair[1], 
-            num_iteration, vert, diag, diff=True
+            num_iteration, vert, diag, diff=False
         )
     )
     # BEGIN NEXT ITERATION 

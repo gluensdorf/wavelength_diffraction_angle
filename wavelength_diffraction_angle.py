@@ -64,14 +64,14 @@ class WavelengthDiffractionAngle:
             a = -1
 
         # TODO: with the test values the if-case is never executed
-        if alpha_m_vert == self.beta_Mb: 
+        # if alpha_m_vert == self.beta_Mb: 
+        if abs(alpha_m_vert - self.beta_Mb) <= 10**(-16): 
             self.theta = -alpha_m_diag
             self.phi = 0
             self.tau = -alpha_m_diag / self.beta_Mb 
             print('if-case')
             print('type(self.theta): ', type(self.theta))
             print('type(self.phi): ', type(self.phi))
-            input()
         else:
             self.theta = a * np.arctan(
                 np.sqrt(
@@ -151,8 +151,8 @@ class WavelengthDiffractionAngle:
         self.new_tau = self.x_1[2][0]
         if self.new_theta == 0:
             self.beta_xy = [0, 0]
+            return
         elif self.new_phi >= 0 and self.new_phi < np.pi/2:
-            print('bla 1')
             self.beta_xy = np.sign(self.new_theta) * (
                 np.array(
                     [
@@ -169,8 +169,9 @@ class WavelengthDiffractionAngle:
                     ]
                 )
             )
+            return
         elif self.new_phi >= np.pi/2 and self.new_phi < np.pi:
-            print('boofar 2')
+        # elif abs(self.new_phi - np.pi/2) >= 10**(-5) and abs(self.new_phi < np.pi):
             self.beta_xy = np.dot(-1.0 * np.sign(self.new_theta), (
                 np.array(
                     [
@@ -187,12 +188,16 @@ class WavelengthDiffractionAngle:
                     ]
                 )
             ))
+            return
         
+        self.beta_xy = [math.inf, math.inf]
+        """
         print(self.new_theta)
         print(self.new_phi)
         print(self.new_tau)
-        print(self.new_phi - np.pi)
+        # print(self.new_phi - np.pi)
         print(self.new_theta == 0)
         print(self.new_phi >= 0 and self.new_phi < np.pi/2)
         print(self.new_phi >= np.pi/2 and self.new_phi < np.pi)
+        """
     

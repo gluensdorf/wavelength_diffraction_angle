@@ -64,8 +64,8 @@ class WavelengthDiffractionAngle:
             a = -1
 
         # TODO: with the test values the if-case is never executed
-        # if alpha_m_vert == self.beta_Mb: 
-        if abs(alpha_m_vert - self.beta_Mb) <= 10**(-16): 
+        if alpha_m_vert == self.beta_Mb: 
+        # if abs(alpha_m_vert - self.beta_Mb) <= 10**(-16): 
             self.theta = -alpha_m_diag
             self.phi = 0
             self.tau = -alpha_m_diag / self.beta_Mb 

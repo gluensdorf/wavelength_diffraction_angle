@@ -126,9 +126,9 @@ class WavelengthDiffractionAngle:
     def calc_function_equation(self):
         self.func_equation = self.h_z * np.array(
             [
-                np.cos(self.theta) * np.tan(self.alpha_m[1]) - np.sin(self.theta) * np.sin(self.phi),
-                np.cos(self.theta) * np.tan(self.alpha_m[0]) - np.sin(self.theta) * np.sin(self.phi),
-                np.sin(self.theta) * np.cos(self.phi)
+                [np.cos(self.theta) * np.tan(self.alpha_m[1]) - np.sin(self.theta) * np.sin(self.phi)],
+                [np.cos(self.theta) * np.tan(self.alpha_m[0]) - np.sin(self.theta) * np.sin(self.phi)],
+                [np.sin(self.theta) * np.cos(self.phi)]
             ]
         ) - self.h_z * np.array(
             [
@@ -140,11 +140,6 @@ class WavelengthDiffractionAngle:
     
     def noname(self):
         foo = np.array([[self.theta], [self.phi], [self.tau]]) # is 3x1
-        '''
-        print('BBBBBBBBBBBBBBBBB')
-        print([np.degrees(self.theta)], [np.degrees(self.phi)], [np.degrees(self.tau)])
-        print('BBBBBBBBBBBBBBBBB')
-        '''
         ABC = np.vstack((self.A, self.B, self.C))
         foobar = np.transpose(ABC) / self.determinant
         bar = foobar.dot(self.func_equation) # is 3x3
@@ -154,11 +149,7 @@ class WavelengthDiffractionAngle:
         self.new_theta = self.x_1[0][0]
         self.new_phi = self.x_1[1][0]
         self.new_tau = self.x_1[2][0]
-        print('AAAAAAAAAAAAAAAAA')
-        print(np.degrees(self.new_theta))
-        print(np.degrees(self.new_phi))
-        print(self.new_tau)
-        print('AAAAAAAAAAAAAAAAA')
+
         if self.new_theta == 0:
             self.beta_xy = [0, 0]
         elif self.new_phi >= 0 and self.new_phi < np.pi/2:
@@ -178,9 +169,8 @@ class WavelengthDiffractionAngle:
                     ]
                 )
             )
-            return
-        elif self.new_phi >= np.pi/2 and self.new_phi < np.pi:
-        # elif abs(self.new_phi - np.pi/2) >= 10**(-5) and abs(self.new_phi - np.pi) >= 10**(-5):
+        # elif self.new_phi >= np.pi/2 and self.new_phi < np.pi:
+        elif abs(self.new_phi - np.pi/2) >= 10**(-5) and abs(self.new_phi - np.pi) >= 10**(-5):
             self.beta_xy = np.dot(-1.0 * np.sign(self.new_theta), (
                 np.array(
                     [
@@ -197,10 +187,8 @@ class WavelengthDiffractionAngle:
                     ]
                 )
             ))
-            return
-        
-        self.beta_xy = [math.inf, math.inf]
-        return
+        else:
+            self.beta_xy = [math.inf, math.inf]
         """
         print(self.new_theta)
         print(self.new_phi)

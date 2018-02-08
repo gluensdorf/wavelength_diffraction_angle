@@ -59,6 +59,7 @@ for pair in value:
     print(f'by: {pair[1]}')
     print(f'_wlda.beta_xy: {np.degrees(_wlda.beta_xy[0])}')
     print(f'_wlda.beta_xy: {np.degrees(_wlda.beta_xy[1])}')
+
     result.append(
         hp.format_result(
             _wlda=_wlda, #vert, diag, 

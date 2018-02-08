@@ -154,13 +154,11 @@ class WavelengthDiffractionAngle:
         self.new_theta = self.x_1[0][0]
         self.new_phi = self.x_1[1][0]
         self.new_tau = self.x_1[2][0]
-        '''
         print('AAAAAAAAAAAAAAAAA')
-        print(self.new_theta)
-        print(self.new_phi)
+        print(np.degrees(self.new_theta))
+        print(np.degrees(self.new_phi))
         print(self.new_tau)
         print('AAAAAAAAAAAAAAAAA')
-        '''
         if self.new_theta == 0:
             self.beta_xy = [0, 0]
         elif self.new_phi >= 0 and self.new_phi < np.pi/2:

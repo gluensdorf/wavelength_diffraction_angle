@@ -24,9 +24,9 @@ class WavelengthDiffractionAngle:
         self.alpha_e = np.arcsin(
             -1 * (self.m * (self.lambda_min + self.lambda_max)/(2 * self.g))
         )
-        self.new_theta = np.float64(0.0)
-        self.new_phi = np.float64(0.0)
-        self.new_tau = np.float64(0.0)
+        self.new_theta = 0.0
+        self.new_phi = 0.0
+        self.new_tau = 0.0
         self.beta_xy = []
         
 
@@ -89,66 +89,78 @@ class WavelengthDiffractionAngle:
                         )
                     )
                 ),
-            self.tau = ((alpha_m_vert - alpha_m_diag) / self.beta_Mb) - 1,
+            self.tau = ((alpha_m_vert - alpha_m_diag) / self.beta_Mb) - 1
 
     def calc_jokabi_matrix(self):
-        self.A = self.beta_Mb * np.sin(self.theta[0]) * np.cos(self.beta_Mb * self.tau[0]) * np.array(
+        self.A = self.beta_Mb * np.sin(self.theta) * np.cos(self.beta_Mb * self.tau) * np.array(
             [
-                np.sin(self.phi[0]) * np.tan(self.beta_Mb * self.tau[0]) * np.tan(self.beta_Mb) + np.cos(self.phi[0]),
-                -(np.sin(self.phi[0]) + np.cos(self.phi[0])),
-                np.cos(self.phi[0])*(1 - np.tan(self.beta_Mb * self.tau[0]) * np.tan(self.beta_Mb))
+                np.sin(self.phi) * np.tan(self.beta_Mb * self.tau) * np.tan(self.beta_Mb) + np.cos(self.phi),
+                -(np.sin(self.phi) + np.cos(self.phi)),
+                np.cos(self.phi)*(1 - np.tan(self.beta_Mb * self.tau) * np.tan(self.beta_Mb))
             ]
         )
-        self.B = self.beta_Mb * np.cos(self.theta[0]) * np.cos(self.beta_Mb * self.tau[0]) * np.array(
+        self.B = self.beta_Mb * np.cos(self.theta) * np.cos(self.beta_Mb * self.tau) * np.array(
             [
-                np.cos(self.phi[0]) * np.tan(self.beta_Mb * self.tau[0]) * np.tan(self.beta_Mb) - np.sin(self.phi[0]) - np.tan(self.theta) * np.tan(self.alpha_m[0]),
-                np.sin(self.phi[0]) - np.cos(self.phi[0]) + np.tan(self.theta[0]) * np.tan(self.alpha_m[1]),
-                np.tan(self.beta_Mb * self.tau[0]) * np.tan(self.beta_Mb) * (np.tan(self.theta[0]) * np.tan(self.alpha_m[1]) + np.sin(self.phi[0])) - 
-                    np.tan(self.theta[0]) * np.tan(self.alpha_m[0]) - np.sin(self.phi[0])
+                np.cos(self.phi) * np.tan(self.beta_Mb * self.tau) * np.tan(self.beta_Mb) - np.sin(self.phi) - np.tan(self.theta) * np.tan(self.alpha_m[0]),
+                np.sin(self.phi) - np.cos(self.phi) + np.tan(self.theta) * np.tan(self.alpha_m[1]),
+                np.tan(self.beta_Mb * self.tau) * np.tan(self.beta_Mb) * (np.tan(self.theta) * np.tan(self.alpha_m[1]) + np.sin(self.phi)) - 
+                    np.tan(self.theta) * np.tan(self.alpha_m[0]) - np.sin(self.phi)
             ]
         )
-        self.C = math.pow(np.sin(self.theta[0]), 2) * np.array(
+        self.C = math.pow(np.sin(self.theta), 2) * np.array(
             [
-                np.cos(self.theta[0]) + np.sin(self.phi[0]) * np.tan(self.alpha_m[0]),
-                -(np.cos(self.theta[0]) + np.sin(self.phi[0]) * np.tan(self.alpha_m[1])),
-                np.cos(self.phi[0]) * (np.tan(self.alpha_m[1]) - np.tan(self.alpha_m[0]))
+                np.cos(self.theta) + np.sin(self.phi) * np.tan(self.alpha_m[0]),
+                -(np.cos(self.theta) + np.sin(self.phi) * np.tan(self.alpha_m[1])),
+                np.cos(self.phi) * (np.tan(self.alpha_m[1]) - np.tan(self.alpha_m[0]))
             ]
         )
 
     def determinant_jakobi(self):
         # found no 'cot' function in numpy, used '1/tan' instead
-        self.determinant = self.beta_Mb * np.cos(self.beta_Mb * self.tau[0]) * math.pow(np.sin(self.theta[0]), 2) * ( #looks correct
-            np.cos(self.phi[0]) * (np.tan(self.alpha_m[0]) - np.tan(self.alpha_m[1])) + np.sin(self.phi[0]) * np.tan(self.alpha_m[0]) - 
-            np.tan(self.beta_Mb * self.tau[0]) * np.tan(self.beta_Mb) * (1/(np.tan(self.theta[0])) + np.sin(self.phi[0]) * np.tan(self.alpha_m[1])) + 1/(np.tan(self.theta[0]))
+        self.determinant = self.beta_Mb * np.cos(self.beta_Mb * self.tau) * math.pow(np.sin(self.theta), 2) * ( #looks correct
+            np.cos(self.phi) * (np.tan(self.alpha_m[0]) - np.tan(self.alpha_m[1])) + np.sin(self.phi) * np.tan(self.alpha_m[0]) - 
+            np.tan(self.beta_Mb * self.tau) * np.tan(self.beta_Mb) * (1/(np.tan(self.theta)) + np.sin(self.phi) * np.tan(self.alpha_m[1])) + 1/(np.tan(self.theta))
         )
 
     # need a better name for that function
     def calc_function_equation(self):
         self.func_equation = np.array(
             [
-                [np.cos(self.theta) * np.tan(self.alpha_m[1]) - np.sin(self.theta) * np.sin(self.phi)],
-                [np.cos(self.theta) * np.tan(self.alpha_m[0]) - np.sin(self.theta) * np.sin(self.phi)],
-                [np.sin(self.theta) * np.cos(self.phi)]
+                [np.cos(self.theta[0]) * np.tan(self.alpha_m[1]) - np.sin(self.theta[0]) * np.sin(self.phi[0])],
+                [np.cos(self.theta[0]) * np.tan(self.alpha_m[0]) - np.sin(self.theta[0]) * np.sin(self.phi[0])],
+                [np.sin(self.theta[0]) * np.cos(self.phi[0])]
             ]
         ) - np.array(
             [
-                [-np.sin(self.beta_Mb * self.tau[0])],
-                [np.cos(self.beta_Mb * self.tau[0]) * np.tan(self.beta_Mb)],
-                [np.sin(self.beta_Mb * self.tau[0])]
+                [-np.sin(self.beta_Mb * self.tau)],
+                [np.cos(self.beta_Mb * self.tau) * np.tan(self.beta_Mb)],
+                [np.sin(self.beta_Mb * self.tau)]
             ]
         )
     
     def noname(self):
-        foo = np.array([[self.theta], [self.phi], [self.tau]]) # is 3x1
-        ABC = np.vstack((self.A, self.B, self.C))
+        foo = np.array([[self.theta[0]], [self.phi[0]], [self.tau]]) # is 3x1
+        ABC = np.hstack((self.A, self.B, self.C))
+        print('foo:')
+        print(foo)
+        print('ABC:')
+        print(ABC)
         foobar = np.transpose(ABC) / self.determinant
+        print('foobar:')
+        print(foobar)
         bar = foobar.dot(self.func_equation) # is 3x3
+        print('bar:')
+        print(bar)
+        print('func_equation')
+        print(self.func_equation)
         self.x_1 = foo - bar
 
     def calc_tilting_angle(self):
-        self.new_theta = self.x_1[2][0][0]
-        self.new_phi = self.x_1[2][1][0]
-        self.new_tau = self.x_1[2][2][0]
+        print('x_1')
+        print(self.x_1)
+        self.new_theta = self.x_1[0][0]
+        self.new_phi = self.x_1[1][0]
+        self.new_tau = self.x_1[2][0]
 
         if self.new_theta == 0:
             self.beta_xy = [0, 0]

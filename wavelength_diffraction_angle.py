@@ -24,9 +24,9 @@ class WavelengthDiffractionAngle:
         self.alpha_e = np.arcsin(
             -1 * (self.m * (self.lambda_min + self.lambda_max)/(2 * self.g))
         )
-        self.new_theta = 0.0
-        self.new_phi = 0.0
-        self.new_tau = 0.0
+        self.new_theta = np.float64(0.0)
+        self.new_phi = np.float64(0.0)
+        self.new_tau = np.float64(0.0)
         self.beta_xy = []
         
 
@@ -79,8 +79,8 @@ class WavelengthDiffractionAngle:
                         np.tan(
                             self.beta_Mb - alpha_m_vert), 2) + math.pow(np.tan(
                                 alpha_m_vert - alpha_m_diag - self.beta_Mb), 2) 
-                            )
-                        )
+                    )
+                )
             self.phi = np.arccos((a * np.tan(
                     alpha_m_vert - alpha_m_diag - self.beta_Mb)) / 
                     (np.sqrt(math.pow(np.tan(self.beta_Mb - alpha_m_vert), 2) + 

@@ -46,9 +46,9 @@ for pair in value:
 
     # _wlda.calc_diffraction_angle(lambda_vert=vert, lambda_diag=diag)
     _wlda.set_transformation_parameters(
-        theta=trans_params[0],
-        phi=trans_params[1],
-        tau=trans_params[2]
+        theta=(trans_params[0],),
+        phi=(trans_params[1],),
+        tau=(trans_params[2],)
         )
     _wlda.calc_jokabi_matrix()
     _wlda.determinant_jakobi()

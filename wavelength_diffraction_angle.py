@@ -80,7 +80,7 @@ class WavelengthDiffractionAngle:
                             self.beta_Mb - alpha_m_vert), 2) + math.pow(np.tan(
                                 alpha_m_vert - alpha_m_diag - self.beta_Mb), 2) 
                     )
-                )
+                ),
             self.phi = np.arccos((a * np.tan(
                     alpha_m_vert - alpha_m_diag - self.beta_Mb)) / 
                     (np.sqrt(math.pow(np.tan(self.beta_Mb - alpha_m_vert), 2) + 
@@ -88,38 +88,38 @@ class WavelengthDiffractionAngle:
                             alpha_m_vert - alpha_m_diag - self.beta_Mb), 2)
                         )
                     )
-                )
-            self.tau = ((alpha_m_vert - alpha_m_diag) / self.beta_Mb) - 1
+                ),
+            self.tau = ((alpha_m_vert - alpha_m_diag) / self.beta_Mb) - 1,
 
     def calc_jokabi_matrix(self):
-        self.A = self.beta_Mb * np.sin(self.theta) * np.cos(self.beta_Mb * self.tau) * np.array(
+        self.A = self.beta_Mb * np.sin(self.theta[0]) * np.cos(self.beta_Mb * self.tau[0]) * np.array(
             [
-                np.sin(self.phi) * np.tan(self.beta_Mb * self.tau) * np.tan(self.beta_Mb) + np.cos(self.phi),
-                -(np.sin(self.phi) + np.cos(self.phi)),
-                np.cos(self.phi)*(1 - np.tan(self.beta_Mb * self.tau) * np.tan(self.beta_Mb))
+                np.sin(self.phi[0]) * np.tan(self.beta_Mb * self.tau[0]) * np.tan(self.beta_Mb) + np.cos(self.phi[0]),
+                -(np.sin(self.phi[0]) + np.cos(self.phi[0])),
+                np.cos(self.phi[0])*(1 - np.tan(self.beta_Mb * self.tau[0]) * np.tan(self.beta_Mb))
             ]
         )
-        self.B = self.beta_Mb * np.cos(self.theta) * np.cos(self.beta_Mb * self.tau) * np.array(
+        self.B = self.beta_Mb * np.cos(self.theta[0]) * np.cos(self.beta_Mb * self.tau[0]) * np.array(
             [
-                np.cos(self.phi) * np.tan(self.beta_Mb * self.tau) * np.tan(self.beta_Mb) - np.sin(self.phi) - np.tan(self.theta) * np.tan(self.alpha_m[0]),
-                np.sin(self.phi) - np.cos(self.phi) + np.tan(self.theta) * np.tan(self.alpha_m[1]),
-                np.tan(self.beta_Mb * self.tau) * np.tan(self.beta_Mb) * (np.tan(self.theta) * np.tan(self.alpha_m[1]) + np.sin(self.phi)) - 
-                    np.tan(self.theta) * np.tan(self.alpha_m[0]) - np.sin(self.phi)
+                np.cos(self.phi[0]) * np.tan(self.beta_Mb * self.tau[0]) * np.tan(self.beta_Mb) - np.sin(self.phi[0]) - np.tan(self.theta) * np.tan(self.alpha_m[0]),
+                np.sin(self.phi[0]) - np.cos(self.phi[0]) + np.tan(self.theta[0]) * np.tan(self.alpha_m[1]),
+                np.tan(self.beta_Mb * self.tau[0]) * np.tan(self.beta_Mb) * (np.tan(self.theta[0]) * np.tan(self.alpha_m[1]) + np.sin(self.phi[0])) - 
+                    np.tan(self.theta[0]) * np.tan(self.alpha_m[0]) - np.sin(self.phi[0])
             ]
         )
-        self.C = math.pow(np.sin(self.theta), 2) * np.array(
+        self.C = math.pow(np.sin(self.theta[0]), 2) * np.array(
             [
-                np.cos(self.theta) + np.sin(self.phi) * np.tan(self.alpha_m[0]),
-                -(np.cos(self.theta) + np.sin(self.phi) * np.tan(self.alpha_m[1])),
-                np.cos(self.phi) * (np.tan(self.alpha_m[1]) - np.tan(self.alpha_m[0]))
+                np.cos(self.theta[0]) + np.sin(self.phi[0]) * np.tan(self.alpha_m[0]),
+                -(np.cos(self.theta[0]) + np.sin(self.phi[0]) * np.tan(self.alpha_m[1])),
+                np.cos(self.phi[0]) * (np.tan(self.alpha_m[1]) - np.tan(self.alpha_m[0]))
             ]
         )
 
     def determinant_jakobi(self):
         # found no 'cot' function in numpy, used '1/tan' instead
-        self.determinant = self.beta_Mb * np.cos(self.beta_Mb * self.tau) * math.pow(np.sin(self.theta), 2) * ( #looks correct
-            np.cos(self.phi) * (np.tan(self.alpha_m[0]) - np.tan(self.alpha_m[1])) + np.sin(self.phi) * np.tan(self.alpha_m[0]) - 
-            np.tan(self.beta_Mb * self.tau) * np.tan(self.beta_Mb) * (1/(np.tan(self.theta)) + np.sin(self.phi) * np.tan(self.alpha_m[1])) + 1/(np.tan(self.theta))
+        self.determinant = self.beta_Mb * np.cos(self.beta_Mb * self.tau[0]) * math.pow(np.sin(self.theta[0]), 2) * ( #looks correct
+            np.cos(self.phi[0]) * (np.tan(self.alpha_m[0]) - np.tan(self.alpha_m[1])) + np.sin(self.phi[0]) * np.tan(self.alpha_m[0]) - 
+            np.tan(self.beta_Mb * self.tau[0]) * np.tan(self.beta_Mb) * (1/(np.tan(self.theta[0])) + np.sin(self.phi[0]) * np.tan(self.alpha_m[1])) + 1/(np.tan(self.theta[0]))
         )
 
     # need a better name for that function
@@ -132,9 +132,9 @@ class WavelengthDiffractionAngle:
             ]
         ) - np.array(
             [
-                [-np.sin(self.beta_Mb * self.tau)],
-                [np.cos(self.beta_Mb * self.tau) * np.tan(self.beta_Mb)],
-                [np.sin(self.beta_Mb * self.tau)]
+                [-np.sin(self.beta_Mb * self.tau[0])],
+                [np.cos(self.beta_Mb * self.tau[0]) * np.tan(self.beta_Mb)],
+                [np.sin(self.beta_Mb * self.tau[0])]
             ]
         )
     
@@ -146,9 +146,9 @@ class WavelengthDiffractionAngle:
         self.x_1 = foo - bar
 
     def calc_tilting_angle(self):
-        self.new_theta = self.x_1[0][0]
-        self.new_phi = self.x_1[1][0]
-        self.new_tau = self.x_1[2][0]
+        self.new_theta = self.x_1[2][0][0]
+        self.new_phi = self.x_1[2][1][0]
+        self.new_tau = self.x_1[2][2][0]
 
         if self.new_theta == 0:
             self.beta_xy = [0, 0]

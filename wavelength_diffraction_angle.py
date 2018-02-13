@@ -141,23 +141,11 @@ class WavelengthDiffractionAngle:
     def noname(self):
         foo = np.array([[self.theta[0]], [self.phi[0]], [self.tau]]) # is 3x1
         ABC = np.hstack((self.A, self.B, self.C))
-        print('foo:')
-        print(foo)
-        print('ABC:')
-        print(ABC)
         foobar = np.transpose(ABC) / self.determinant
-        print('foobar:')
-        print(foobar)
         bar = foobar.dot(self.func_equation) # is 3x3
-        print('bar:')
-        print(bar)
-        print('func_equation')
-        print(self.func_equation)
         self.x_1 = foo - bar
 
     def calc_tilting_angle(self):
-        print('x_1')
-        print(self.x_1)
         self.new_theta = self.x_1[0][0]
         self.new_phi = self.x_1[1][0]
         self.new_tau = self.x_1[2][0]

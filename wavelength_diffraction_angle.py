@@ -124,13 +124,13 @@ class WavelengthDiffractionAngle:
 
     # need a better name for that function
     def calc_function_equation(self):
-        self.func_equation = self.h_z * np.array(
+        self.func_equation = np.array(
             [
                 [np.cos(self.theta) * np.tan(self.alpha_m[1]) - np.sin(self.theta) * np.sin(self.phi)],
                 [np.cos(self.theta) * np.tan(self.alpha_m[0]) - np.sin(self.theta) * np.sin(self.phi)],
                 [np.sin(self.theta) * np.cos(self.phi)]
             ]
-        ) - self.h_z * np.array(
+        ) - np.array(
             [
                 [-np.sin(self.beta_Mb * self.tau)],
                 [np.cos(self.beta_Mb * self.tau) * np.tan(self.beta_Mb)],

@@ -52,6 +52,61 @@ def single_calculation(diag, vert):
     _wlda.calc_tilting_angle()
     return _wlda
 
+def single_calculation_two_iterations(diag, vert):
+    num_iteration = int()
+    _wlda = wlda(
+        g=10/13, m=1, h_z=0.769231, 
+        lambda_min=0.4300, beta_Mb=np.radians(5)
+    )
+
+    _wlda.calc_diffraction_angle(lambda_vert=vert, lambda_diag=diag)
+    _wlda.calc_x_0()
+    _wlda.calc_jokabi_matrix()
+    _wlda.determinant_jakobi()
+    _wlda.calc_function_equation()
+    _wlda.noname()
+    _wlda.calc_tilting_angle()
+
+    trans_params = _wlda.get_transformation_parameters()
+
+    result = []
+    result.append(
+        format_result(
+            _wlda=_wlda, #vert, diag, 
+            theta=trans_params[0], phi=trans_params[1], tau=trans_params[2], bx=_wlda.beta_xy[0], by=_wlda.beta_xy[1], 
+            num_iteration=num_iteration, vert=vert, diag=diag, diff=False
+        )
+    )
+    # BEGIN NEXT ITERATION 
+    num_iteration = 1
+    _wlda = wlda(
+        g=10/13, m=1, h_z=0.769231, 
+        lambda_min=0.4300, beta_Mb=np.radians(5)
+    )
+
+    _wlda.calc_diffraction_angle(lambda_vert=vert, lambda_diag=diag)
+    _wlda.set_transformation_parameters(
+        theta=trans_params[0],
+        phi=trans_params[1],
+        tau=trans_params[2]
+        )
+    _wlda.calc_jokabi_matrix()
+    _wlda.determinant_jakobi()
+    _wlda.calc_function_equation()
+    _wlda.noname()
+    _wlda.calc_tilting_angle()
+
+    trans_params = _wlda.get_transformation_parameters()
+    result.append(
+        format_result(
+            _wlda=_wlda, #vert, diag, 
+            theta=trans_params[0], phi=trans_params[1], tau=trans_params[2], bx=_wlda.beta_xy[0], by=_wlda.beta_xy[1], 
+            num_iteration=num_iteration, vert=vert, diag=diag, diff=False
+        )
+    )
+
+    write_into_file("diff_output.txt", result)
+    return _wlda
 
 def format_result(_wlda, theta, phi, tau, bx, by, num_iteration,vert, diag, diff=False): #vert, diag, 
     width = 20

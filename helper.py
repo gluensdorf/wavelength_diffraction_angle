@@ -80,7 +80,6 @@ def single_calculation_two_iterations(diag, vert):
         )
     )
     # BEGIN NEXT ITERATION 
-    print('######### NEXT ITERATION ###########')
     num_iteration = 1
     _wlda = wlda(
         g=10/13, m=1, h_z=0.769231, 
@@ -117,8 +116,8 @@ def format_result(_wlda, theta, phi, tau, bx, by, num_iteration,vert, diag, diff
     if diff:
         result = f'{bx:^+{5}.{3}f}|'\
             f'{by:^+{5}.{3}f}|'\
-            f'{abs(theta - np.degrees(_wlda.new_theta[0])):^+{width}.{precision}f}|'\
-            f'{abs(phi - np.degrees(_wlda.new_phi[0])):^+{width}.{precision}f}|'\
+            f'{abs(theta - np.degrees(_wlda.new_theta)):^+{width}.{precision}f}|'\
+            f'{abs(phi - np.degrees(_wlda.new_phi)):^+{width}.{precision}f}|'\
             f'{abs(tau - _wlda.new_tau):^+{width}.{precision}f}|'\
             f'{abs(bx - np.degrees(_wlda.beta_xy[0])):^+{width}.{precision}f}|'\
             f'{abs(by - np.degrees(_wlda.beta_xy[1])):^+{width}.{precision}f}|'\

@@ -44,7 +44,30 @@ for pair in value:
     num_iteration = 1
     trans_params = _wlda.get_transformation_parameters()
 
-    print(trans_params)
+    # _wlda.calc_diffraction_angle(lambda_vert=vert, lambda_diag=diag)
+    _wlda.set_transformation_parameters(
+        theta=(trans_params[0],),
+        phi=(trans_params[1],),
+        tau=trans_params[2]
+        )
+    _wlda.calc_jokabi_matrix()
+    _wlda.determinant_jakobi()
+    _wlda.calc_function_equation()
+    _wlda.noname()
+    _wlda.calc_tilting_angle()
+
+    result.append(
+        hp.format_result(
+            _wlda=_wlda, #vert, diag, 
+            theta=pair[2], phi=pair[3], tau=pair[4], 
+            bx=pair[0], by=pair[1], 
+            num_iteration=num_iteration, vert=vert, diag=diag, diff=False
+        )
+    )
+
+    num_iteration = 2
+    trans_params = _wlda.get_transformation_parameters()
+
     # _wlda.calc_diffraction_angle(lambda_vert=vert, lambda_diag=diag)
     _wlda.set_transformation_parameters(
         theta=(trans_params[0],),

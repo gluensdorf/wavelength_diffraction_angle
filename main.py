@@ -40,6 +40,7 @@ for pair in value:
             num_iteration=num_iteration, vert=vert, diag=diag, diff=False
         )
     )
+    """
     # BEGIN NEXT ITERATION 
     num_iteration = 1
     trans_params = _wlda.get_transformation_parameters()
@@ -88,5 +89,6 @@ for pair in value:
             num_iteration=num_iteration, vert=vert, diag=diag, diff=False
         )
     )
+    """
 
 hp.write_into_file("diff_output.txt", result)

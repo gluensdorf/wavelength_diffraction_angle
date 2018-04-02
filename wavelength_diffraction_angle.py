@@ -152,16 +152,23 @@ class WavelengthDiffractionAngle:
 
         if self.new_theta == 0:
             self.beta_xy = [0, 0]
-        elif self.new_phi >= 0 and self.new_phi < np.pi/2:
+            return
+        else:
+            sign_x = -1 * np.sign(self.new_theta)
+            if self.new_phi >= 0 and self.new_phi < np.pi/2:
+                sign_y = -1 * sign_x
+            else:
+                sign_y = sign_x
+
             self.beta_xy = np.sign(self.new_theta) * (
                 np.array(
                     [
-                        -np.arccos(
+                        sign_x * np.arccos(
                             1/np.sqrt(
                                 1 + math.pow(np.tan(self.new_theta), 2) * math.pow(np.sin(self.new_phi), 2)
                             )
                         ),
-                        np.arccos(
+                        sign_y * np.arccos(
                             1/np.sqrt(
                                 1 + math.pow(np.tan(self.new_theta), 2) * math.pow(np.cos(self.new_phi), 2)
                             )
@@ -169,6 +176,7 @@ class WavelengthDiffractionAngle:
                     ]
                 )
             )
+            """
         # elif self.new_phi >= np.pi/2 and self.new_phi < np.pi:
         elif abs(self.new_phi - np.pi/2) >= 10**(-5) and abs(self.new_phi - np.pi) >= 10**(-5):
             self.beta_xy = np.dot(-1.0 * np.sign(self.new_theta), (
@@ -189,6 +197,7 @@ class WavelengthDiffractionAngle:
             ))
         else:
             self.beta_xy = [math.inf, math.inf]
+            """
         """
         print(self.new_theta)
         print(self.new_phi)

@@ -13,9 +13,6 @@ value = hp.get_values_from_data(data)
 result = [hp.get_header()]
 num_iteration = int()
 
-# single_wlda = hp.single_calculation(563.57552/1000, 630.61840/1000)
-# print(np.degrees(single_wlda.phi))
-
 for pair in value:
     num_iteration = 0
     diag = pair[-2] / 1000
@@ -35,7 +32,7 @@ for pair in value:
 
     result.append(
         hp.format_result(
-            _wlda=_wlda, #vert, diag, 
+            _wlda=_wlda, 
             theta=pair[2], phi=pair[3], tau=pair[4], bx=pair[0], by=pair[1], 
             num_iteration=num_iteration, vert=vert, diag=diag, diff=False
         )

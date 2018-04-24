@@ -160,51 +160,15 @@ class WavelengthDiffractionAngle:
             else:
                 sign_y = sign_x
 
-            self.beta_xy = np.sign(self.new_theta) * (
-                np.array(
-                    [
-                        sign_x * np.arccos(
-                            1/np.sqrt(
-                                1 + math.pow(np.tan(self.new_theta), 2) * math.pow(np.sin(self.new_phi), 2)
-                            )
-                        ),
-                        sign_y * np.arccos(
-                            1/np.sqrt(
-                                1 + math.pow(np.tan(self.new_theta), 2) * math.pow(np.cos(self.new_phi), 2)
-                            )
-                        )
-                    ]
+            beta_x = sign_x * np.arccos(
+                1/np.sqrt( 
+                    1 + math.pow(np.tan(self.new_theta), 2) * math.pow(np.sin(self.new_phi), 2)
+                    )
                 )
-            )
-            """
-        # elif self.new_phi >= np.pi/2 and self.new_phi < np.pi:
-        elif abs(self.new_phi - np.pi/2) >= 10**(-5) and abs(self.new_phi - np.pi) >= 10**(-5):
-            self.beta_xy = np.dot(-1.0 * np.sign(self.new_theta), (
-                np.array(
-                    [
-                        np.arccos(
-                            1/np.sqrt(
-                                1 + math.pow(np.tan(self.new_theta), 2) * math.pow(np.sin(self.new_phi), 2)
-                            )
-                        ),
-                        np.arccos(
-                            1/np.sqrt(
-                                1 + math.pow(np.tan(self.new_theta), 2) * math.pow(np.cos(self.new_phi), 2)
-                            )
-                        )
-                    ]
+            
+            beta_y = sign_y * np.arccos( 
+                1/np.sqrt( 
+                    1 + math.pow(np.tan(self.new_theta), 2) * math.pow(np.cos(self.new_phi), 2)
+                    )
                 )
-            ))
-        else:
-            self.beta_xy = [math.inf, math.inf]
-            """
-        """
-        print(self.new_theta)
-        print(self.new_phi)
-        print(self.new_tau)
-        # print(self.new_phi - np.pi)
-        print(self.new_theta == 0)
-        print(self.new_phi >= 0 and self.new_phi < np.pi/2)
-        print(self.new_phi >= np.pi/2 and self.new_phi < np.pi)
-        """
-    
+            self.beta_xy = np.array([beta_x, beta_y])

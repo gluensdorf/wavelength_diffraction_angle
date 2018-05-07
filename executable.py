@@ -5,6 +5,18 @@ import math as math
 import numpy as np
 import sys
 
+"""
+TODO:
+die main soll alle __init__ parameter uebergeben bekommen wenn die executable ausgefuehrt wird
+winkelpaare + fehlercode soll immer als ergebnis geliefert werden
+    fehlercodes siehe labview
+
+winkelpaare sollen innerhalb von lambda_min und dem berechneten lambda_max liegen
+    wenn nicht soll ein entsprechender fehlercode geworfen werden
+    winkel sind beide auf 99grad
+
+"""
+
 class WavelengthDiffractionAngle:
     def __init__(self, g, m, h_z, lambda_min, beta_Mb):
         """

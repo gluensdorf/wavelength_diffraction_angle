@@ -8,8 +8,17 @@ import sys
 """
 TODO:
 die main soll alle __init__ parameter uebergeben bekommen wenn die executable ausgefuehrt wird
+
+
+nachfolgendes nicht in diesem script abfangen sondern in labview(?)
+
 winkelpaare + fehlercode soll immer als ergebnis geliefert werden
     fehlercodes siehe labview
+    das script kann an sich vordefinierte fehlercodes schmeissen und den bool (sagt obs ein fehler oder eine warnung ist)
+        warnung: bool=FALSE, code != 0
+        fehler: bool=TRUE, code != 0 (evtl. reicht es auch dass bool=TRUE damit es ein fehler ist)
+        ok:     bool=FALSE, code == 0
+    das labview programm muss nochmal erweitert werden um moegliche fehler richtig zu handhaben
 
 winkelpaare sollen innerhalb von lambda_min und dem berechneten lambda_max liegen
     wenn nicht soll ein entsprechender fehlercode geworfen werden
@@ -207,8 +216,8 @@ def main():
 
     trans_params = _wlda.get_transformation_parameters()
 
-    print(np.degrees(_wlda.beta_xy[0]))
-    print(np.degrees(_wlda.beta_xy[1]))
+    # print(np.degrees(_wlda.beta_xy[0]))
+    # print(np.degrees(_wlda.beta_xy[1]))
     return _wlda.beta_xy
 
 main()

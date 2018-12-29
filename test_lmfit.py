@@ -3,27 +3,11 @@
 
 import math as math
 import numpy as np
-import helper as hp
 import matplotlib.pyplot as plt
-# from lmfit.models import PseudoVoigtModel as PVM
-from lmfit import models
+import scipy as sp
+from scipy.signal import savgol_filter
+from scipy.signal import find_peaks
 
-from wavelength_diffraction_angle import WavelengthDiffractionAngle as wlda
-
-# data = hp.load_file('data/make_params')
-data = np.loadtxt('data/07_Serie_Prototyp/13-N-0Grad2.SSM', skiprows=2, unpack=True)
-# value = hp.get_values_from_data(data)
-x = data[0]
-y = data[1]
-
-# for record in value:
-    # x.append(record[-2])
-    # y.append(record[-1])prefixes
-
-# x = np.array(x)
-# y = np.array(y)
-
-# print(x)
 """
 x = np.array([
     696.15911, 689.68461, 683.19140, 676.67985, 670.15033,
@@ -48,26 +32,34 @@ y = np.array([
     # 689.88437, 689.88437
 ])
 """
-# want to find 3 peaks and assign them a prefix each
-peak1 = models.PseudoVoigtModel(prefix='p1_') # (nan_policy='propagate')
-peak2 = models.PseudoVoigtModel(prefix='p2_')
-peak3 = models.PseudoVoigtModel(prefix='p3_')
-model = peak1 + peak2 + peak3
-params = model.make_params(p1_sigma=0.701, p2_sigma=0.602, p3_sigma=0.803)
-params = peak1.guess(y, x=x)
-params.update(peak2.guess(y, x=x))
-params.update(peak3.guess(y, x=x))
 
-params['p1_center'].set(min=350, max=800)
-params['p2_center'].set(min=350, max=800)
-params['p3_center'].set(min=350, max=800)
-result = model.fit(y, params, x=x)
-# print(result.fit_report())
+data = np.loadtxt('data/07_Serie_Prototyp/13-N-0Grad2.SSM', skiprows=2, unpack=True)
+# data = np.loadtxt('data/07_Serie_Prototyp/13-N-hinten2,5Grad.SSM', skiprows=2, unpack=True)
+# data = np.loadtxt('data/07_Serie_Prototyp/13-N-links2,5Grad.SSM', skiprows=2, unpack=True)
+# data = np.loadtxt('data/07_Serie_Prototyp/13-N-rechts2,5Grad.SSM', skiprows=2, unpack=True)
+# data = np.loadtxt('data/07_Serie_Prototyp/13-N-vorn2,5Grad.SSM', skiprows=2, unpack=True)
+x = data[0]
+y = data[1]
 
-print(result.fit_report(min_correl=0.25))
-result.plot()
+# about savgol_filter:
+# take the signal data and apply savitzky-golay filter on it
+# second parameter is yet arbitrarily chosen - has to be odd (to have a center), smooths values which are left and right of center 
+#   concerning padding or what happens at the edges of the signal:
+#       "When the 'interp' mode is selected (the default), no extension is used. Instead, a degree /polyorder/ polynomial
+#        is fit to the last /window_length/ values of the edges, and this polynomial is used to evaluate the last /window_length // 2/
+#        output values."
+# third parameter is the order of the polynomial used to fit the samples - 2 should be sufficient
+result = savgol_filter(data, 51, 2)
+peaks, _ = find_peaks(result[1])
+sort_peaks = np.argsort(result[1][peaks])
 
-plt.plot(x, y, 'bo')
-plt.plot(x, result.init_fit, 'k--')
-plt.plot(x, result.best_fit, 'r-')
+# top_three_peaks -- from smoothed signal take the peaks and sort them by 'y' and take the last 3 (the biggest three)
+x_top_three_peaks = result[0][peaks][sort_peaks][-3:]
+y_top_three_peaks = result[1][peaks][sort_peaks][-3:]
+
+print(x_top_three_peaks)
+
+plt.plot(x-1, y, 'bo')
+plt.plot(result[0], result[1], 'r-')
+plt.plot(x_top_three_peaks, y_top_three_peaks, "yx")
 plt.show()

@@ -41,25 +41,33 @@ data = np.loadtxt('data/07_Serie_Prototyp/13-N-0Grad2.SSM', skiprows=2, unpack=T
 x = data[0]
 y = data[1]
 
-# about savgol_filter:
-# take the signal data and apply savitzky-golay filter on it
-# second parameter is yet arbitrarily chosen - has to be odd (to have a center), smooths values which are left and right of center 
-#   concerning padding or what happens at the edges of the signal:
-#       "When the 'interp' mode is selected (the default), no extension is used. Instead, a degree /polyorder/ polynomial
-#        is fit to the last /window_length/ values of the edges, and this polynomial is used to evaluate the last /window_length // 2/
-#        output values."
-# third parameter is the order of the polynomial used to fit the samples - 2 should be sufficient
-result = savgol_filter(data, 51, 2)
-peaks, _ = find_peaks(result[1])
-sort_peaks = np.argsort(result[1][peaks])
+"""
+about savgol_filter:
+take the signal data and apply savitzky-golay filter on it
+second parameter is yet arbitrarily chosen - has to be odd (to have a center), smooths values which are left and right of center 
+  concerning padding or what happens at the edges of the signal:
+      "When the 'interp' mode is selected (the default), no extension is used. Instead, a degree /polyorder/ polynomial
+       is fit to the last /window_length/ values of the edges, and this polynomial is used to evaluate the last /window_length // 2/
+       output values."
+third parameter is the order of the polynomial used to fit the samples - 2 should be sufficient
+
+is it sufficient to come up with a kernel-width (second parameter) by testing/experiments?
+could be sufficient if the length of data (number of measured wavelengths/"pixel") from a 
+measurement won't change.
+
+tested different kernel-widths, first correct maxima found with 43 using 13-N-0Grad2.SSM as input data
+"""
+smoothed_signal = savgol_filter(data, 43, 2)
+peaks, _ = find_peaks(smoothed_signal[1])
+sort_peaks = np.argsort(smoothed_signal[1][peaks])
 
 # top_three_peaks -- from smoothed signal take the peaks and sort them by 'y' and take the last 3 (the biggest three)
-x_top_three_peaks = result[0][peaks][sort_peaks][-3:]
-y_top_three_peaks = result[1][peaks][sort_peaks][-3:]
+x_top_three_peaks = smoothed_signal[0][peaks][sort_peaks][-3:]
+y_top_three_peaks = smoothed_signal[1][peaks][sort_peaks][-3:]
 
 print(x_top_three_peaks)
 
 plt.plot(x-1, y, 'bo')
-plt.plot(result[0], result[1], 'r-')
+plt.plot(smoothed_signal[0], smoothed_signal[1], 'r-')
 plt.plot(x_top_three_peaks, y_top_three_peaks, "yx")
 plt.show()

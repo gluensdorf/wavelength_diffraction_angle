@@ -9,39 +9,6 @@ from scipy.signal import savgol_filter
 from scipy.signal import find_peaks
 
 """
-x = np.array([
-    696.15911, 689.68461, 683.19140, 676.67985, 670.15033,
-    663.60325, 657.03900, 650.45797, 643.86058, 637.24725,
-    630.61840, 623.97447, 617.31589, 610.64312, 603.95661,
-    597.25682, 590.54423, 583.81931, 577.08256, 570.33446,
-    563.57552 #, 689.68461, 683.18245, 676.66290, 670.12634,
-    # 663.57317, 657.00380, 650.41865, 643.81813, 637.20267,
-    # 630.57270, 623.92867, 617.27102, 610.60021, 603.91669,
-    # 597.22094, 590.51342, 583.79463, 577.06505, 570.32518,
-    # 563.57552, 556.81658 
-])
-y = np.array([
-    696.40479, 696.40479, 696.40479, 696.40479, 696.40479,
-    696.40479, 696.40479, 696.40479, 696.40479, 696.40479,
-    696.40479, 696.40479, 696.40479, 696.40479, 696.40479,
-    696.40479, 696.40479, 696.40479, 696.40479, 696.40479,
-    696.40479 #, 689.88437, 689.88437, 689.88437, 689.88437,
-    # 689.88437, 689.88437, 689.88437, 689.88437, 689.88437,
-    # 689.88437, 689.88437, 689.88437, 689.88437, 689.88437,
-    # 689.88437, 689.88437, 689.88437, 689.88437, 689.88437,
-    # 689.88437, 689.88437
-])
-"""
-
-data = np.loadtxt('data/07_Serie_Prototyp/13-N-0Grad2.SSM', skiprows=2, unpack=True)
-# data = np.loadtxt('data/07_Serie_Prototyp/13-N-hinten2,5Grad.SSM', skiprows=2, unpack=True)
-# data = np.loadtxt('data/07_Serie_Prototyp/13-N-links2,5Grad.SSM', skiprows=2, unpack=True)
-# data = np.loadtxt('data/07_Serie_Prototyp/13-N-rechts2,5Grad.SSM', skiprows=2, unpack=True)
-# data = np.loadtxt('data/07_Serie_Prototyp/13-N-vorn2,5Grad.SSM', skiprows=2, unpack=True)
-x = data[0]
-y = data[1]
-
-"""
 about savgol_filter:
 take the signal data and apply savitzky-golay filter on it
 second parameter is yet arbitrarily chosen - has to be odd (to have a center), smooths values which are left and right of center 
@@ -57,17 +24,42 @@ measurement won't change.
 
 tested different kernel-widths, first correct maxima found with 43 using 13-N-0Grad2.SSM as input data
 """
-smoothed_signal = savgol_filter(data, 43, 2)
-peaks, _ = find_peaks(smoothed_signal[1])
-sort_peaks = np.argsort(smoothed_signal[1][peaks])
 
-# top_three_peaks -- from smoothed signal take the peaks and sort them by 'y' and take the last 3 (the biggest three)
-x_top_three_peaks = smoothed_signal[0][peaks][sort_peaks][-3:]
-y_top_three_peaks = smoothed_signal[1][peaks][sort_peaks][-3:]
+def get_top_peaks(spectrum, kernel_width, polynomial_order):
+    """
+    Returns list of found top peaks from the given spectrum. Uses savgol_filter (Savitzky-Golay filter) to smooth the spectrum.
+    
+    :param spectrum: list of measured spectrum with xy-pairs (wavelength, amplitude)
+    :returns: list of top peaks found
+    """
 
-print(x_top_three_peaks)
+    smoothed_signal = savgol_filter(spectrum, kernel_width, polynomial_order)
+    peaks, _ = find_peaks(smoothed_signal[1])
+    sort_peaks = np.argsort(smoothed_signal[1][peaks])
 
-plt.plot(x-1, y, 'bo')
-plt.plot(smoothed_signal[0], smoothed_signal[1], 'r-')
-plt.plot(x_top_three_peaks, y_top_three_peaks, "yx")
-plt.show()
+    # top_three_peaks -- from smoothed signal take the peaks and sort them by 'y' and take the last 3 (the biggest three)
+    x_top_three_peaks = smoothed_signal[0][peaks][sort_peaks][-3:]
+    y_top_three_peaks = smoothed_signal[1][peaks][sort_peaks][-3:]
+    return (x_top_three_peaks, y_top_three_peaks)
+
+dataset_paths = [
+  'data/07_Serie_Prototyp/13-N-0Grad2.SSM',
+  'data/07_Serie_Prototyp/13-N-hinten2,5Grad.SSM',
+  'data/07_Serie_Prototyp/13-N-links2,5Grad.SSM',
+  'data/07_Serie_Prototyp/13-N-rechts2,5Grad.SSM',
+  'data/07_Serie_Prototyp/13-N-vorn2,5Grad.SSM'
+]
+
+for path in dataset_paths:
+  data = np.loadtxt(path, skiprows=2, unpack=True)
+  x = data[0]
+  y = data[1]
+
+  top_three_peaks = get_top_peaks(data, 45, 2)
+  smoothed_signal = savgol_filter(data, 45, 2) #<<< useless, TODO delete 
+  print(top_three_peaks[0])
+
+  plt.plot(x-1, y, 'bo')
+  plt.plot(smoothed_signal[0], smoothed_signal[1], 'r-')
+  plt.plot(top_three_peaks[0], top_three_peaks[1], "yx")
+  plt.show()

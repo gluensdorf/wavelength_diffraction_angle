@@ -3,7 +3,7 @@
 
 import math as math
 import numpy as np
-import helper as hp
+import wlda_helper as hp
 
 from wavelength_diffraction_angle import WavelengthDiffractionAngle as wlda
 

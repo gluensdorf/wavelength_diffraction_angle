@@ -10,6 +10,7 @@ import matplotlib.pyplot as plt
 import scipy as sp
 import glob
 import peakutils as pu
+from pprint import pprint
 from scipy.signal import savgol_filter
 from scipy.signal import find_peaks, find_peaks_cwt
 
@@ -86,17 +87,65 @@ extract coefficients of polynomial function
 get first order deviation of polynomial function (?)
 """
 
-def get_valleys_around_peak(peak):
+def get_n_highest_peaks(smoothed_signal, n, peaks):
+  """
+  Returns the n-highest peaks of the smoothed_signal.
+
+  :param smoothed_signal: 2D-list containing a list of x-values and a list of y-values 
+  :param n: amount of peaks to find
+  :param peaks: list of x-values of peaks found in the smoothed_signal
+
+  :returns: 2D-list containing a list of x-values of n-highest peaks
+                           and a list of y-values of n-highest peaks
+  """
+  # sort peaks by their amplitude
+  sort_peaks = np.argsort(smoothed_signal[1][peaks])
+
+  # top_three_peaks -- from smoothed signal take the peaks and sort them by 'y' and take the last 3 (the biggest three)
+  n_highest_peaks = []
+  for index in reversed(range(0, n)):
+    wavelength = smoothed_signal[0][peaks][sort_peaks][-index]
+    amplitude = smoothed_signal[1][peaks][sort_peaks][-index]
+    peak_index = list(smoothed_signal[0]).index(wavelength)
+    n_highest_peaks.append({
+        'peak_index' : peak_index,
+        'wavelength' : wavelength,
+        'amplitude' : amplitude
+      })
+
+  return n_highest_peaks
+
+def isolate_hills(spectrum, peaks, distance=0):
   """
   Returns a list of valley/minima pairs which enclose a peak/maxima in peaks. 
-  The pairs are stored in a dictionary {lefthandside: valley/minimum, righthandside: valley/minimum}.
+  The pairs are stored in a dictionary {left: valley/minimum, right: valley/minimum}.
 
-  :param peaks: list of peaks in a smoothed spectrum
+  # :param peaks: list of peaks in a smoothed spectrum
   :param spectrum: a smoothed spectrum
-  :returns: list of valley/minima pairs for each peak in peaks
+  :param distance: default=0, optional, minimal distance required between a peak and left/right valley/minimum
+  :returns: dictionary of valley/minima pairs for each peak in peaks
   """
 
-  return
+  # smooth_x = spectrum[0]
+  smooth_y = spectrum[1]
+  order_value = 30
+  # peaks = sp.signal.argrelmax(smooth_y, order=order_value)
+  valleys = list(sp.signal.argrelmin(smooth_y, order=order_value)[0])
+  n_highest_peaks = get_n_highest_peaks(spectrum, 3, peaks)
+
+  hills = []
+  for element in n_highest_peaks:
+    valleys.append(element['peak_index'])
+    valleys.sort()
+    valley_lhs = valleys[valleys.index(element['peak_index']) - 1]
+    valley_rhs = valleys[valleys.index(element['peak_index']) + 1]
+    hills.append({
+      'peak_index': element['peak_index'],
+      'left': valley_lhs,
+      'right': valley_rhs
+      })
+
+  return hills
   
 
 for path in dataset_paths:
@@ -106,59 +155,49 @@ for path in dataset_paths:
 
   x = data[0]
   y = data[1]
-  smooth_x = smoothed_signal[0]
   smooth_y = smoothed_signal[1]
+  order_value = 20
+  peaks, _ = sp.signal.find_peaks(smooth_y, distance=order_value, height=0.0025)#order=order_value)
+  # valleys = sp.signal.argrelmin(smooth_y, order=order_value)
 
-  peaks, properties = find_peaks(smooth_y, distance=150)#, height=0.02)
-  # peaks = find_peaks_cwt(smooth_y, np.arange(50, 75))
-  print(peaks)
-  print(smooth_y[peaks])
-  # prominences, left_bases, right_bases = sp.signal.peak_prominences(smooth_y, peaks, wlen=75)
-  # peak_width_full = sp.signal.peak_widths(smooth_y, peaks, rel_height=1)
-  # print("prominences: ", prominences)
-  # print("left_bases: ", left_bases)
-  # print("right_bases: ", right_bases)
+  distance = 0
+  hills = isolate_hills(smoothed_signal, peaks, distance)
 
-  plt.plot(x-1, y, 'b-')
-  plt.plot(smoothed_signal[0], smoothed_signal[1], "r-")
-  plt.plot(smoothed_signal[0][peaks], smoothed_signal[1][peaks], "yx")
-
-  valleys, properties = find_peaks(-smooth_y, distance=150)#, height=0.02)
-  plt.plot(x-1, y, 'b-')
-  plt.plot(smoothed_signal[0], smoothed_signal[1], "y-")
-  plt.plot(smoothed_signal[0][valleys], smoothed_signal[1][valleys], "rx")
-  print(valleys)
-  print(smooth_y[valleys])
-  # plt.plot(smoothed_signal[0][valleys], smoothed_signal[1][valleys], "yo")
-  # plt.plot(smoothed_signal[0][right_bases], smoothed_signal[1][right_bases], "go")
-  # plt.plot(smoothed_signal[0][left_bases], smoothed_signal[1][left_bases], "ro")
-  # plt.hlines(*peak_width_full[1:], color="lime")
-
-  plt.show()
-  """
-  widths = np.arange(1, 45)
-  smoothed_signal = savgol_filter(data, 45, 2) #<<< useless, TODO delete - is used to plot the smoothed signal
-  top_three_peaks = get_top_peaks_cwt(smoothed_signal, widths)
-  # print("top_peaks: ", top_peaks)
-  """
-
-  """
-  # former kernel_width was 45
-  top_three_peaks = get_top_peaks(data, 301, 2)
-  smoothed_signal = savgol_filter(data, 301, 2) #<<< useless, TODO delete - is used to plot the smoothed signal
+  left_valleys = [[], []]
+  right_valleys = [[], []]
+  for element in hills:
+    left_valleys[0].append(smoothed_signal[0][element['left']])
+    left_valleys[1].append(smoothed_signal[1][element['left']])
+    right_valleys[0].append(smoothed_signal[0][element['right']])
+    right_valleys[1].append(smoothed_signal[1][element['right']])
   
-  # top_three_peaks_int64 = np.array(top_three_peaks, dtype='int64')
-  # smoothed_signal.astype(int64)
-  # print("smoothed_signal[0]: ", smoothed_signal[0])
-  # print("top_three_peaks_int64[0]: ", top_three_peaks_int64[0])
-  # print(smoothed_signal[0][592])
-  # prominences = sp.signal.peak_prominences(smoothed_signal[0], top_three_peaks_int64[0], wlen=25)
-  # print(prominences)
+  hills_samplepoints = []
+  for element in hills:
+    hills_samplepoints.append([
+      smoothed_signal[0][ element['left']: element['right']],
+      smoothed_signal[1][ element['left']: element['right']]
+      ])
+  
+  polys = []
+  x_range = []
+  for samplepoints in hills_samplepoints:
+    polys.append(np.poly1d(np.polyfit(samplepoints[0], samplepoints[1], 2)))
+    x_range.append(
+      np.linspace(
+        samplepoints[0][0], 
+        samplepoints[0][-1], 
+        500))
 
-  # print(top_three_peaks[0])
+  for poly in polys:
+    p_der = np.polyder(poly)
+    print(p_der.roots)
 
-  plt.plot(x-1, y, 'b-')
   plt.plot(smoothed_signal[0], smoothed_signal[1], "r-")
-  plt.plot(top_three_peaks[0], top_three_peaks[1], "yx")
+  plt.plot(smoothed_signal[0][peaks], smoothed_signal[1][peaks], "gx")
+  plt.plot(left_valleys[0], left_valleys[1], "go")
+  plt.plot(right_valleys[0], right_valleys[1], "ro")
+  plt.plot(x_range[0], polys[0](x_range[0]), "b-")
+  plt.plot(x_range[1], polys[1](x_range[1]), "b-")
+  plt.plot(x_range[2], polys[2](x_range[2]), "b-")
+
   plt.show()
-  """

@@ -13,7 +13,7 @@ class plotter:
 
     def __execute_mode(self):
         if self.mode == 'hills':
-            self.plot_hills()
+            self.update_hills()
 
     def __check_mode(self):
         if self.mode == 'hills':
@@ -51,7 +51,7 @@ class plotter:
 
         plt.show()
 
-    def plot_hills(self):
+    def update_hills(self):
         spectrum = self.data_sample[0]
         x_range = self.data_sample[1]
         peaks = self.data_sample[2]
@@ -59,21 +59,20 @@ class plotter:
         rhs_valleys = self.data_sample[4]
         polys = self.data_sample[5]
 
-        # plt.figure('hills')
-        self.line1.set_ydata(spectrum[1])
         self.line1.set_xdata(spectrum[0])
-        self.line2.set_ydata(spectrum[1][peaks])
+        self.line1.set_ydata(spectrum[1])
         self.line2.set_xdata(spectrum[0][peaks])
-        self.line3.set_ydata(lhs_valleys[1])
+        self.line2.set_ydata(spectrum[1][peaks])
         self.line3.set_xdata(lhs_valleys[0])
-        self.line4.set_ydata(rhs_valleys[1])
+        self.line3.set_ydata(lhs_valleys[1])
         self.line4.set_xdata(rhs_valleys[0])
-        self.line5.set_ydata(polys[0](x_range[0]))
+        self.line4.set_ydata(rhs_valleys[1])
         self.line5.set_xdata(x_range[0])
-        self.line6.set_ydata(polys[1](x_range[1]))
+        self.line5.set_ydata(polys[0](x_range[0]))
         self.line6.set_xdata(x_range[1])
-        self.line7.set_ydata(polys[2](x_range[2]))
+        self.line6.set_ydata(polys[1](x_range[1]))
         self.line7.set_xdata(x_range[2])
+        self.line7.set_ydata(polys[2](x_range[2]))
 
     def prepare_hills(self):
         """

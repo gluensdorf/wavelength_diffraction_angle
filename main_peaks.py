@@ -24,17 +24,18 @@ if __name__ == "__main__":
   ]
   """
 
+  # return list of paths of all files in folder 
   dataset_paths = glob.glob('/home/darlokh/Documents/hiwi/code/data/Messwerte_clean/20181130_12_00*')
   for path in dataset_paths:
     # skiprows set to 0 because data was cleaned
     data = np.loadtxt(path, skiprows=0, unpack=True)
-    smoothed_signal = savgol_filter(data, 301, 2) #<<< useless, TODO delete - is used to plot the smoothed signal
+    smoothed_signal = savgol_filter(data, 301, 2)
 
-    x = data[0]
-    y = data[1]
+    x = data[0] # wavelength
+    y = data[1] # amplitude
     smooth_y = smoothed_signal[1]
     order_value = 20
-    peaks, _ = sp.signal.find_peaks(smooth_y, distance=order_value, height=0.0025)#order=order_value)
+    peaks, _ = sp.signal.find_peaks(smooth_y, distance=order_value, height=0.0025)
     # valleys = sp.signal.argrelmin(smooth_y, order=order_value)
 
     distance = 0

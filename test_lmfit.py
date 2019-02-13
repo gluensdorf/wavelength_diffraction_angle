@@ -101,7 +101,7 @@ def get_n_highest_peaks(smoothed_signal, n, peaks):
 def isolate_hills(spectrum, peaks, distance=0):
   """
   Returns a list of valley/minima pairs which enclose a peak/maxima in peaks. 
-  The pairs are stored in a dictionary {left: valley/minimum, right: valley/minimum}.
+  Pairs are stored in a dictionary {left: valley/minimum, right: valley/minimum}.
 
   # :param peaks: list of peaks in a smoothed spectrum
   :param spectrum: a smoothed spectrum

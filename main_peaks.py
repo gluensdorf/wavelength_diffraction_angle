@@ -9,52 +9,76 @@ import numpy as np
 import matplotlib.pyplot as plt
 import scipy as sp
 import glob
-from pprint import pprint
+from pprint import pprint as pp
 from scipy.signal import savgol_filter
 
 import plotter as plotter
 import test_lmfit as lmfit
 
+
+def write_into_file(path_to_file, result):
+    with open(path_to_file, "a") as myfile:
+        for line in result:
+            myfile.write(line)
+    myfile.close()
+
+
+def prepare_results(graphs, paths_dataset):
+    width = 21
+    precision = 10
+    header = f"  id | poly-id | peak(x)        [nm] | filename \n"
+    breakline = f"------------------------------------------------\n"
+    result = []
+    result.append(header)
+    result.append(breakline)
+    for graph_idx, graph in enumerate(graphs):
+        for idx, poly in enumerate(graph[-1]):
+            x_lhs_valleys = graphs[graph_idx][3][0][idx]
+            x_rhs_valleys = graphs[graph_idx][4][0][idx]
+            derivate = np.polyder(poly).roots
+
+            r_derivate = derivate[derivate.imag == 0].real
+            crossings = [x for x in r_derivate if x >=
+                         x_lhs_valleys and x <= x_rhs_valleys]
+            poly_peak = None
+            for _, val in enumerate(crossings):
+                if poly(val) == max(poly(crossings)):
+                    poly_peak = val
+            # pp(f"{graph_idx} maximum at: {poly_peak}")
+
+            line = f"{graph_idx:4} | {idx:^6} |{poly_peak:^{width}.{precision}}|"\
+                   f" {paths_dataset[graph_idx].split('/')[-1]}\n"
+            result.append(line)
+        result.append(breakline)
+    return result
+
+
 if __name__ == "__main__":
     # return list of paths of all files in folder
     paths_dataset = glob.glob(
-        '/home/darlokh/Documents/hiwi/code/data/Messwerte_clean/20181130_12_00*')
+        '/home/darlokh/Documents/hiwi/code/data/Messwerte_clean/2018*')
 
     graphs = []
-    for path in paths_dataset:
+    for idx, path in enumerate(paths_dataset):
+        if 0 == idx % 50:
+            print(idx)
         # skiprows set to 0 because data was cleaned
         data = np.loadtxt(path, skiprows=0, unpack=True)
-        smoothed_signal = savgol_filter(data, 301, 2)
+        smoothed_signal = savgol_filter(data, 301, 2)  # numpy array
 
         x = data[0]  # wavelength
         y = data[1]  # amplitude
         smooth_y = smoothed_signal[1]
-        order_value = 20
+        order_value = 50
         peaks, _ = sp.signal.find_peaks(
-            smooth_y, distance=order_value, height=0.0025)
+            smooth_y, distance=order_value, height=0.003)
         # valleys = sp.signal.argrelmin(smooth_y, order=order_value)
 
         distance = 0
         hills = lmfit.isolate_hills(smoothed_signal, peaks, distance)
 
-        # outsource loop to a function
-        lhs_valleys = [[], []]
-        rhs_valleys = [[], []]
-        for element in hills:
-            lhs_valleys[0].append(smoothed_signal[0][element['left']])
-            lhs_valleys[1].append(smoothed_signal[1][element['left']])
-            rhs_valleys[0].append(smoothed_signal[0][element['right']])
-            rhs_valleys[1].append(smoothed_signal[1][element['right']])
-
-        # outsource loop to a function
-        # TODO: ist in hills_samplepoints dasselbe wie in lhs/rhs_valleys?
-        #       wenn ja koennen die valleys weg
-        hills_samplepoints = []
-        for element in hills:
-            hills_samplepoints.append([
-                smoothed_signal[0][element['left']: element['right']],
-                smoothed_signal[1][element['left']: element['right']]
-            ])
+        lhs_valleys, rhs_valleys, hills_samplepoints = lmfit.select_valleys(
+            smoothed_signal, hills)
 
         # outsource loop to a function
         polys = []
@@ -62,7 +86,7 @@ if __name__ == "__main__":
         for samplepoints in hills_samplepoints:
             polys.append(
                 np.poly1d(
-                    np.polyfit(samplepoints[0], samplepoints[1], 2)))
+                    np.polyfit(x=samplepoints[0], y=samplepoints[1], deg=5)))
             x_range.append(
                 np.linspace(
                     samplepoints[0][0], samplepoints[0][-1], 500))
@@ -77,3 +101,4 @@ if __name__ == "__main__":
                        lhs_valleys, rhs_valleys, polys])
     plotter = plotter.plotter(graphs)
     plotter.plot(mode='hills')
+    write_into_file('test.txt', prepare_results(graphs, paths_dataset))

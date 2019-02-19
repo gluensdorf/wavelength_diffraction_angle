@@ -9,6 +9,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import scipy as sp
 import glob
+import sys
 from pprint import pprint as pp
 from scipy.signal import savgol_filter
 
@@ -24,14 +25,19 @@ def write_into_file(path_to_file, result):
 
 
 def prepare_results(graphs, paths_dataset):
-    width = 21
+    width = 14
     precision = 10
-    header = f"  id | poly-id | peak(x)        [nm] | filename \n"
+    # header = f"  id | poly-id | peak(x)        [nm] | filename \n"
+    # breakline = f"------------------------------------------------\n"
+    header = f" 1. peak [nm] | 2. peak [nm] | 3. peak [nm] | filename \n"
     breakline = f"------------------------------------------------\n"
     result = []
     result.append(header)
     result.append(breakline)
+    # iterate over every measurement (a graph)
     for graph_idx, graph in enumerate(graphs):
+        poly_peaks = []
+        # iterate over every created polynom of a graph
         for idx, poly in enumerate(graph[-1]):
             x_lhs_valleys = graphs[graph_idx][3][0][idx]
             x_rhs_valleys = graphs[graph_idx][4][0][idx]
@@ -44,12 +50,21 @@ def prepare_results(graphs, paths_dataset):
             for _, val in enumerate(crossings):
                 if poly(val) == max(poly(crossings)):
                     poly_peak = val
+                    poly_peaks.append(poly_peak)
             # pp(f"{graph_idx} maximum at: {poly_peak}")
 
-            line = f"{graph_idx:4} | {idx:^6} |{poly_peak:^{width}.{precision}}|"\
-                   f" {paths_dataset[graph_idx].split('/')[-1]}\n"
-            result.append(line)
-        result.append(breakline)
+            # line = f"{graph_idx:4} | {idx:^6} |{poly_peak:^{width}.{precision}}|"\
+            #       f" {paths_dataset[graph_idx].split('/')[-1]}\n"
+            # result.append(line)
+        line = f"{poly_peaks[0]:^{width}.{precision}}|"\
+               f"{poly_peaks[1]:^{width}.{precision}}|"
+        if len(poly_peaks) == 3:
+            line += f"{poly_peaks[2]:^{width}.{precision}}|"
+        else:
+            line += f"{'NONE':^{width}.{precision}}|"
+        line += f"{paths_dataset[graph_idx].split('/')[-1]}\n"
+        result.append(line)
+        # result.append(breakline)
     return result
 
 

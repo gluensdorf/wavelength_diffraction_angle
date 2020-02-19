@@ -56,13 +56,16 @@ def prepare_results(graphs, paths_dataset):
             # line = f"{graph_idx:4} | {idx:^6} |{poly_peak:^{width}.{precision}}|"\
             #       f" {paths_dataset[graph_idx].split('/')[-1]}\n"
             # result.append(line)
-        line = f"{poly_peaks[0]:^{width}.{precision}}|"\
-               f"{poly_peaks[1]:^{width}.{precision}}|"
+        poly_peaks.sort()
         if len(poly_peaks) == 3:
-            line += f"{poly_peaks[2]:^{width}.{precision}}|"
+            line = f"{poly_peaks[0]:^{width}.{precision}}|"\
+                   f"{poly_peaks[1]:^{width}.{precision}}|"\
+                   f"{poly_peaks[2]:^{width}.{precision}}|"
         else:
-            line += f"{'NONE':^{width}.{precision}}|"
-        line += f"{paths_dataset[graph_idx].split('/')[-1]}\n"
+            line = f"{'NONE':^{width}.{precision}}|"\
+                   f"{poly_peaks[0]:^{width}.{precision}}|"\
+                   f"{poly_peaks[1]:^{width}.{precision}}|"
+        line += f" {paths_dataset[graph_idx].split('/')[-1]}\n"
         result.append(line)
         # result.append(breakline)
     return result
@@ -116,4 +119,4 @@ if __name__ == "__main__":
                        lhs_valleys, rhs_valleys, polys])
     plotter = plotter.plotter(graphs)
     plotter.plot(mode='hills')
-    write_into_file('test.txt', prepare_results(graphs, paths_dataset))
+    write_into_file('3-auswertung_2018-11-30.txt', prepare_results(graphs, paths_dataset))
